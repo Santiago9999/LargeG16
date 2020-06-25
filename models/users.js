@@ -1,15 +1,22 @@
 // models/articles.js
 const mongoose = require('mongoose');
 
-const articleSchema = new mongoose.Schema({ 
-  title: {
-    type: String,
-    required: [true, "Title is required"]
-  },
-  content: {
-    type: String,
-    required: [true, "Content can't be blank"]
-  }
+// Create Schema Model 
+
+const UsersSchema = new mongoose.Schema({ 
+	ID: Number,
+	FirstName: String,
+	LastName: String, 
+	Email: String,
+	Password: String,
+	Scores: [ScoresSchema]
 });
 
-module.exports = mongoose.model('Article', articleSchema); 
+const ScoresSchema = new mongoose.Schema({ 
+	Intro: Number,
+	CS1: Number, 
+	CS2: Number,
+});
+
+
+module.exports = mongoose.model('users', UsersSchema); 
