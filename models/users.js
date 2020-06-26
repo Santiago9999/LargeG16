@@ -1,7 +1,13 @@
-// models/articles.js
+
 const mongoose = require('mongoose');
 
 // Create Schema Model 
+
+const ScoresSchema = new mongoose.Schema({ 
+	Intro: Number,
+	CS1: Number, 
+	CS2: Number,
+});
 
 const UsersSchema = new mongoose.Schema({ 
 	ID: Number,
@@ -12,11 +18,4 @@ const UsersSchema = new mongoose.Schema({
 	Scores: [ScoresSchema]
 });
 
-const ScoresSchema = new mongoose.Schema({ 
-	Intro: Number,
-	CS1: Number, 
-	CS2: Number,
-});
-
-
-module.exports = mongoose.model('users', UsersSchema); 
+module.exports = mongoose.model('Users', UsersSchema); 
