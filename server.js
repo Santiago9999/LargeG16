@@ -14,6 +14,25 @@ app.use(express.json());
 app.use('/api', router); 
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true,}); 
+var db = mongoose.connection;
+
+// for (var i in mongoose.connection.collections) 
+// {
+//   console.log(mongoose.connection.collections[i]);
+//   // will drop collection hereclear
+// }
+
+//Testing
+// db.getCollection('Users').insert(
+//   {
+//   'ID': '1',
+//   'FirstName': 'Juan',
+//   'LastName': 'Herrera', 
+//   'Email': 'Juan@Herrera.com',
+//   'Password': '123'
+//   }
+// )
+
 mongoose.connection.once('open', function() { 
   console.log('Connected to the Database.');
 });

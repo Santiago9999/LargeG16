@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 
 // Create Schema Model 
 
-const ScoresSchema = new mongoose.Schema({ 
-	Intro: Number,
-	CS1: Number, 
-	CS2: Number,
-});
+// const ScoresSchema = new mongoose.Schema({ 
+// 	Intro: Number,
+// 	CS1: Number, 
+// 	CS2: Number,
+// });
 
 const UsersSchema = new mongoose.Schema({ 
 	ID: Number,
@@ -15,7 +15,7 @@ const UsersSchema = new mongoose.Schema({
 	LastName: String, 
 	Email: String,
 	Password: String,
-	Scores: [ScoresSchema]
+	//Scores: [ScoresSchema]
 });
 
-module.exports = mongoose.model('Users', UsersSchema); 
+module.exports = mongoose.model('User', UsersSchema); 

@@ -1,16 +1,15 @@
 const mocha = require('mocha');
 const assert = require('assert');
-const MarioChar = require('../models/users');
 const users = require('../models/users');
 // Descrbibe Test
 describe('Saving Records', function()
 {
     //Create test
     it('Saving Records to Database', function(done){
-        this.timeout(10000);
+        this.timeout(15000);
         var char = new users({
-            ID: '1',
-	        FirstName: 'Juan',
+            ID: '2',
+	        FirstName: 'Joel',
 	        LastName: 'Herrera', 
 	        Email: 'Juan@Herrera.com',
 	        Password: '123',
@@ -21,5 +20,4 @@ describe('Saving Records', function()
         });
     });
     // Next Test
-
 });
