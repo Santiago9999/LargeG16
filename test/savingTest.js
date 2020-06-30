@@ -1,12 +1,11 @@
 const mocha = require('mocha');
 const assert = require('assert');
-const users = require('../models/users');
+const users = require('../models/users').default;
 // Descrbibe Test
 describe('Saving Records', function()
 {
     //Create test
     it('Saving Records to Database', function(done){
-        this.timeout(15000);
         var char = new users({
             ID: '2',
 	        FirstName: 'Joel',
