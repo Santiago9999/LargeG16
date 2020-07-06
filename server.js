@@ -66,6 +66,7 @@ mongoose.connection.on('error', function(error) {
 const userModel = mongoose.model("user", UsersSchema);
 
 //----------------------------------------------------------------------------------------------------------
+const numberOfQuestionsPerSession = 20;
 var id = '';
 var firstName = '';
 var lastName = '';
@@ -138,7 +139,6 @@ app.post('/api/login', async (req, res, next) =>
   // Everything is Good, we are sending back a JSON Package
   res.status(200).json(ret);
   });
-
 //----------------------------------------------------------------------------------------------------------
 app.post('/api/register', async (req, res, next) => 
 {
@@ -245,14 +245,13 @@ app.post('/api/updateIntro', async (req, res, next) =>
   var introTotalCorrect = credentials[0].Scores[0].Intro[0].TotalCorrect;
   var introTotalAttempted = credentials[0].Scores[0].Intro[0].TotalAttempted;
   var introScoresID = credentials[0].Scores[0].Intro[0]._id;
-  console.log("IntroHighscore: " + introHighScore + " IntroTotal Correct: " + introTotalCorrect + " IntroTotalAttemtped: " + introTotalAttempted + " IntroScoresID: " + introScoresID)
   // Updating Previous Values
   if (parseInt(introScore) > introHighScore)
   {
     introHighScore = parseInt(introScore);
   }
   introTotalCorrect = parseInt(introTotalCorrect + parseInt(introScore));
-  introTotalAttempted += 20;
+  introTotalAttempted += numberOfQuestionsPerSession;
   // Finished Updating Values
   await userModel.findOneAndUpdate
   (
@@ -263,14 +262,22 @@ app.post('/api/updateIntro', async (req, res, next) =>
       if (err)
       {
         console.log(err);
-        error = "Failure";
+        error = "Unsucessfully Updated Intro";
       }
       else
       {
-        error = "Sucess";
+        error = "Sucessfully Updated Intro";
       }
     }
   );
+  if (await updateTotal(_id, credentials))
+  {
+    error = "Sucessfully Updated Intro But not Total";
+  }
+  else
+  {
+    error = "Sucessfully Updated Intro and Total";
+  }
   var ret =
   {
     error : error 
@@ -297,14 +304,13 @@ app.post('/api/updateCS1', async (req, res, next) =>
   var CS1TotalCorrect = credentials[0].Scores[0].CS1[0].TotalCorrect;
   var CS1TotalAttempted = credentials[0].Scores[0].CS1[0].TotalAttempted;
   var CS1ScoresID = credentials[0].Scores[0].CS1[0]._id;
-  console.log("CS1Highscore: " + CS1HighScore + " CS1Total Correct: " + CS1TotalCorrect + " CS1TotalAttemtped: " + CS1TotalAttempted + " CS1ScoresID: " + CS1ScoresID)
   // Updating Previous Values
   if (parseInt(CS1Score) > CS1HighScore)
   {
     CS1HighScore = parseInt(CS1Score);
   }
   CS1TotalCorrect = parseInt(CS1TotalCorrect + parseInt(CS1Score));
-  CS1TotalAttempted += 20;
+  CS1TotalAttempted += numberOfQuestionsPerSession;
   // Finished Updating Values
   await userModel.findOneAndUpdate
   (
@@ -315,14 +321,22 @@ app.post('/api/updateCS1', async (req, res, next) =>
       if (err)
       {
         console.log(err);
-        error = "Failure";
+        error = "Unucessfully Updated CS1";
       }
       else
       {
-        error = "Success";
+        error = "Sucessfully Updated CS1";
       }
     }
   );
+  if (await updateTotal(_id, credentials))
+  {
+    error = "Sucessfully Updated CS1 But not Total";
+  }
+  else
+  {
+    error = "Sucessfully Updated CS1 and Total";
+  }
   var ret =
   {
     error : error 
@@ -349,14 +363,14 @@ app.post('/api/updateCS2', async (req, res, next) =>
   var CS2TotalCorrect = credentials[0].Scores[0].CS2[0].TotalCorrect;
   var CS2TotalAttempted = credentials[0].Scores[0].CS2[0].TotalAttempted;
   var CS2ScoresID = credentials[0].Scores[0].CS2[0]._id;
-  console.log("CS2Highscore: " + CS2HighScore + " CS2Total Correct: " + CS2TotalCorrect + " CS2TotalAttemtped: " + CS2TotalAttempted + " CS2ScoresID: " + CS2ScoresID)
+  
   // Updating Previous Values
   if (parseInt(CS2Score) > CS2HighScore)
   {
     CS2HighScore = parseInt(CS2Score);
   }
   CS2TotalCorrect = parseInt(CS2TotalCorrect + parseInt(CS2Score));
-  CS2TotalAttempted += 20;
+  CS2TotalAttempted += numberOfQuestionsPerSession;
   // Finished Updating Values
   await userModel.findOneAndUpdate
   (
@@ -367,14 +381,22 @@ app.post('/api/updateCS2', async (req, res, next) =>
       if (err)
       {
         console.log(err);
-        error = "Failure";
+        error = "Unsucessfully Updated CS2";
       }
       else
       {
-        error = "Success";
+        error = "Sucessfully Updated CS2";
       }
     }
   );
+  if (await updateTotal(_id, credentials))
+  {
+    error = "Sucessfully Updated CS2  But not Total";
+  }
+  else
+  {
+    error = "Sucessfully Updated CS2 and Total";
+  }
   var ret =
   {
     error : error 
@@ -382,21 +404,50 @@ app.post('/api/updateCS2', async (req, res, next) =>
   res.status(200).json(ret);
 });
 //----------------------------------------------------------------------------------------------------------
-app.post('/api/updateCS2', async (req, res, next) => 
+//Fucntions to Support the API End Points
+function updateTotal (_id, credentials)
 {
-  console.log('We are currently in the Scores API');
-  console.log(req.body);
-  const { _id, firstName, lastName, CS2Score} = req.body;
-  console.log('Data Recieved \n');
+  // Intro Scores
+  var introHighScore = credentials[0].Scores[0].Intro[0].HighScore;
+  var introTotalCorrect = credentials[0].Scores[0].Intro[0].TotalCorrect;
+  var introTotalAttempted = credentials[0].Scores[0].Intro[0].TotalAttempted;
   
+  // CS1 Scores
+  var CS1HighScore = credentials[0].Scores[0].CS1[0].HighScore;
+  var CS1TotalCorrect = credentials[0].Scores[0].CS1[0].TotalCorrect;
+  var CS1TotalAttempted = credentials[0].Scores[0].CS1[0].TotalAttempted;
+  
+  // CS2 Scores
+  var CS2HighScore = credentials[0].Scores[0].CS2[0].HighScore;
+  var CS2TotalCorrect = credentials[0].Scores[0].CS2[0].TotalCorrect;
+  var CS2TotalAttempted = credentials[0].Scores[0].CS2[0].TotalAttempted;
+  
+  // Id to update 
+  var totalScoresID = credentials[0].Scores[0].Total[0]._id;
+  var totalHighScore = introHighScore + CS1HighScore + CS2HighScore;
+  var totalTotalCorrect = introTotalCorrect + CS1TotalCorrect + CS2TotalCorrect;
+  var totalTotalAttempted = introTotalAttempted + CS1TotalAttempted + CS2TotalAttempted;
+  console.log("totalHighScore: " + totalHighScore + " totalTotalCorrect: " + totalTotalCorrect + " totalTotalAttemtped: " + totalTotalAttempted );
+  // Finished Updating Values
+  userModel.findOneAndUpdate
+  (
+    {"Scores.Total._id" : totalScoresID},
+    {"$set" : {"Scores.0.Total.$.HighScore" : totalHighScore , "Scores.0.Total.$.TotalCorrect" : totalTotalCorrect , "Scores.0.Total.$.TotalAttempted" : totalTotalAttempted }},
+    function(err, result)
+    {
+      if (err)
+      {
+        console.log(err);
+        return false;
+      }
+      else
+      {
+        return true;
+      }
+    }
+  );
+}
 
-
-  var ret =
-  {
-    error : "Testing" 
-  }
-  res.status(200).json(ret);
-});
 // Add API end points here that call external functions 
 app.get('/', function(request, response) { response.send('Hello World!') });
 
