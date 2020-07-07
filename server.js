@@ -31,12 +31,14 @@ const UsersSchema = new Schema({
 	Scores: [UserScores]
 });
 
-// const highScoreSchema = new Schema (
-// {
-//   FirstName: { type: String },
-//   LastName: { type: String }, 
-//   Score: {type: Number}
-// });
+const leaderboardSchema = new Schema (
+{
+  UserID : {type: String},
+  FirstName: { type: String },
+  LastName: { type: String }, 
+  TotalCorrect: {type: Number},
+  TotalAttempted: {type: Number}
+});
 //----------------------------------------------------------------------------------------------------------
 
 const router = require('./routes/index');
@@ -64,6 +66,7 @@ mongoose.connection.on('error', function(error) {
 //----------------------------------------------------------------------------------------------------------
 // Initializing Models
 const userModel = mongoose.model("user", UsersSchema);
+const leaderboardModelIntro = mongoose.model("leaderboardIntro", leaderboardSchema);
 
 //----------------------------------------------------------------------------------------------------------
 const numberOfQuestionsPerSession = 20;
@@ -257,7 +260,7 @@ app.post('/api/updateIntro', async (req, res, next) =>
   (
     {"Scores.Intro._id" : introScoresID},
     {"$set" : {"Scores.0.Intro.$.HighScore" : introHighScore , "Scores.0.Intro.$.TotalCorrect" : introTotalCorrect , "Scores.0.Intro.$.TotalAttempted" : introTotalAttempted }},
-    function(err, result)
+    function(err)
     {
       if (err)
       {
@@ -277,6 +280,49 @@ app.post('/api/updateIntro', async (req, res, next) =>
   else
   {
     error = "Sucessfully Updated Intro and Total";
+  }
+  if (await leaderboardModelIntro.exists({UserID: _id}))
+  {
+    await leaderboardModelIntro.findOneAndUpdate
+    (
+      {"UserID" : _id},
+      {"$set" : {"TotalCorrect" : introTotalCorrect, "TotalAttempted" : introTotalAttempted}},
+      function(err)
+      {
+        if (err)
+        {
+          console.log(err)
+        }
+      }
+    );
+  }
+  else
+  {
+    var leaderboardInstance = new leaderboardModelIntro
+    (
+      {
+        UserID : _id,
+        FirstName: firstName,
+        LastName:  lastName , 
+        TotalCorrect: introTotalCorrect,
+        TotalAttempted: introTotalAttempted
+      }
+    )
+    console.log("Ready To add to instance")
+    leaderboardInstance.save().then(result => 
+      {
+        console.log(result);
+        error = 'Sucess';
+        var ret =
+        {
+          error : error 
+        }
+      })
+      .catch(err => 
+      {
+        error = err;
+        console.log('Save() Exception: ', err);
+      });
   }
   var ret =
   {
@@ -447,7 +493,6 @@ function updateTotal (_id, credentials)
     }
   );
 }
-
 // Add API end points here that call external functions 
 app.get('/', function(request, response) { response.send('Hello World!') });
 
