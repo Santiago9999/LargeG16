@@ -80,7 +80,7 @@ var phase1 = '';
 var phase2 = '';
 var phase3 = '';
 var error = '';
-//----------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 app.post('/api/login', async (req, res, next) => 
 {
@@ -148,7 +148,7 @@ app.post('/api/login', async (req, res, next) =>
   // Everything is Good, we are sending back a JSON Package
   res.status(200).json(ret);
   });
-//----------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 app.post('/api/register', async (req, res, next) => 
 {
   console.log('We are currently in the register API');
@@ -234,17 +234,20 @@ app.post('/api/register', async (req, res, next) =>
    // Everything is Good, we are sending back a JSON Package
    res.status(200).json(ret);
 });
-//----------------------------------------------------------------------------------------------------------
-app.post('/api/updateIntro', async (req, res, next) => 
-{
-  console.log('We are currently in the Scores API');
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+app.post('/api/updateIntro', async (req, res, next) => {
+  console.log('We are currently in the UpdateIntro API');
   console.log(req.body);
-  const { _id, firstName, lastName, introScore} = req.body;
-  console.log('Data Recieved \n');
-  const credentials = await userModel.find({_id: _id}, function(err)
-  {
-    if (err)
-    {
+  const {
+    _id,
+    firstName,
+    lastName,
+    score
+  } = req.body;
+  const credentials = await userModel.find({
+    _id: _id
+  }, function (err) {
+    if (err) {
       console.log(err);
       error = err;
     }
@@ -255,92 +258,128 @@ app.post('/api/updateIntro', async (req, res, next) =>
   var introTotalAttempted = credentials[0].Scores[0].Intro[0].TotalAttempted;
   var introScoresID = credentials[0].Scores[0].Intro[0]._id;
   // Updating Previous Values
-  if (parseInt(introScore) > introHighScore)
-  {
-    introHighScore = parseInt(introScore);
+  if (parseInt(score) > introHighScore) {
+    introHighScore = parseInt(score);
   }
-  introTotalCorrect = parseInt(introTotalCorrect + parseInt(introScore));
+  introTotalCorrect = parseInt(introTotalCorrect + parseInt(score));
   introTotalAttempted += numberOfQuestionsPerSession;
-  // Finished Updating Values
-  await userModel.findOneAndUpdate
-  (
-    {"Scores.Intro._id" : introScoresID},
-    {"$set" : {"Scores.0.Intro.$.HighScore" : introHighScore , "Scores.0.Intro.$.TotalCorrect" : introTotalCorrect , "Scores.0.Intro.$.TotalAttempted" : introTotalAttempted }},
-    function(err)
-    {
-      if (err)
-      {
-        console.log(err);
-        phase1 = "Unsucessfully Updated Intro";
+  // Finished Updating Values on User Table
+  await userModel.findOneAndUpdate({
+      "Scores.Intro._id": introScoresID
+    }, {
+      "$set": {
+        "Scores.0.Intro.$.HighScore": introHighScore,
+        "Scores.0.Intro.$.TotalCorrect": introTotalCorrect,
+        "Scores.0.Intro.$.TotalAttempted": introTotalAttempted
       }
-      else
-      {
+    },
+    function (err) {
+      if (err) {
+        console.log(err);
+        error = err;
+        phase1 = "Unsucessfully Updated Intro";
+      } else {
         phase1 = "Sucessfully Updated Intro";
       }
     }
   );
-  if (await updateTotal(_id, credentials))
-  {
-    phase2 = "Unsucessfully Updated Total";
-  }
-  else
-  {
-    phase2 = "Sucessfully Updated Total";
-  }
-  if (await leaderboardModelIntro.exists({UserID: _id}))
-  {
-    await leaderboardModelIntro.findOneAndUpdate
-    (
-      {"UserID" : _id},
-      {"$set" : {"TotalCorrect" : introTotalCorrect, "TotalAttempted" : introTotalAttempted}},
-      function(err)
-      {
-        if (err)
-        {
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  // Updating Total Table
+
+  // CS1 Scores
+  var CS1HighScore = credentials[0].Scores[0].CS1[0].HighScore;
+  var CS1TotalCorrect = credentials[0].Scores[0].CS1[0].TotalCorrect;
+  var CS1TotalAttempted = credentials[0].Scores[0].CS1[0].TotalAttempted;
+
+  // CS2 Scores
+  var CS2HighScore = credentials[0].Scores[0].CS2[0].HighScore;
+  var CS2TotalCorrect = credentials[0].Scores[0].CS2[0].TotalCorrect;
+  var CS2TotalAttempted = credentials[0].Scores[0].CS2[0].TotalAttempted;
+
+  // Id to update 
+  var totalScoresID = credentials[0].Scores[0].Total[0]._id;
+  var totalHighScore = introHighScore + CS1HighScore + CS2HighScore;
+  var totalTotalCorrect = introTotalCorrect + CS1TotalCorrect + CS2TotalCorrect;
+  var totalTotalAttempted = introTotalAttempted + CS1TotalAttempted + CS2TotalAttempted;
+  console.log("totalHighScore: " + totalHighScore + " totalTotalCorrect: " + totalTotalCorrect + " totalTotalAttemtped: " + totalTotalAttempted);
+  // Finished Updating Values for Total
+  await userModel.findOneAndUpdate({
+      "Scores.Total._id": totalScoresID
+    }, {
+      "$set": {
+        "Scores.0.Total.$.HighScore": totalHighScore,
+        "Scores.0.Total.$.TotalCorrect": totalTotalCorrect,
+        "Scores.0.Total.$.TotalAttempted": totalTotalAttempted
+      }
+    },
+    function (err, result) {
+      if (err) {
+        console.log(err);
+        error = err;
+        phase2 = "Unsucessfully Updated Total";
+      } else {
+        phase2 = "Sucessfully Updated Total";
+      }
+    }
+  );
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  // Updating LeaderBoard Table
+  // Checking To see if record Exist
+  if (await leaderboardModelIntro.exists({
+    // Fix this 
+      UserID: _id
+    })) {
+    await leaderboardModelIntro.findOneAndUpdate({
+        "UserID": _id
+      }, {
+        "$set": {
+          "TotalCorrect": introTotalCorrect,
+          "TotalAttempted": introTotalAttempted
+        }
+      },
+      function (err) {
+        if (err) {
           console.log(err)
+          phase3 = "Unsucessfully Updated LeaderBoard Intro";
+          error = err;
+        } else {
+          console.log("Updated LeaderBoard")
+          phase3 = "Sucessfully Updated LeaderBoard Intro";
         }
       }
     );
-  }
-  else
-  {
-    var leaderboardInstance = new leaderboardModelIntro
-    (
-      {
-        UserID : _id,
-        FirstName: firstName,
-        LastName:  lastName , 
-        HighScore: introHighScore,
-        TotalCorrect: introTotalCorrect,
-        TotalAttempted: introTotalAttempted
-      }
-    )
+  } else {
+    var leaderboardInstance = new leaderboardModelIntro({
+      UserID: _id,
+      FirstName: firstName,
+      LastName: lastName,
+      HighScore: credentials[0].Scores[0].Total[0].HighScore,
+      TotalCorrect: credentials[0].Scores[0].Total[0].TotalCorrect,
+      TotalAttempted: credentials[0].Scores[0].Total[0].TotalAttempted
+    })
     console.log("Ready To add to instance")
-    leaderboardInstance.save().then(result => 
-      {
-        phase3 = "Sucessfully Updated LeaderBoard Intro" ;
-        console.log(result);
+    await leaderboardInstance.save().then(result => {
+      console.log("Created LeaderBoard")
+        phase3 = "Sucessfully Updated LeaderBoard Intro";
       })
-      .catch(err => 
-      {
-        phase3 = "Unsucessfully Updated LeaderBoard Intro" ;
+      .catch(err => {
+        phase3 = "Unsucessfully Updated LeaderBoard Intro";
         console.log('Save() Exception: ', err);
       });
   }
-  var ret =
-  {
-    Phase1 : phase1,
-    Phase2 : phase2,
-    Phase3 : phase3
+  var ret = {
+    Phase1: phase1,
+    Phase2: phase2,
+    Phase3: phase3
   }
   res.status(200).json(ret);
 });
-//----------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 app.post('/api/updateCS1', async (req, res, next) => 
 {
   console.log('We are currently in the Scores API');
   console.log(req.body);
-  const { _id, firstName, lastName, CS1Score} = req.body;
+  const { _id, firstName, lastName, score} = req.body;
   console.log('Data Recieved \n');
   const credentials = await userModel.find({_id: _id}, function(err)
   {
@@ -437,12 +476,12 @@ app.post('/api/updateCS1', async (req, res, next) =>
   }
   res.status(200).json(ret);
 });
-//----------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 app.post('/api/updateCS2', async (req, res, next) => 
 {
   console.log('We are currently in the Scores API');
   console.log(req.body);
-  const { _id, firstName, lastName, CS2Score} = req.body;
+  const { _id, firstName, lastName, score} = req.body;
   console.log('Data Recieved \n');
   const credentials = await userModel.find({_id: _id}, function(err)
   {
@@ -539,7 +578,19 @@ app.post('/api/updateCS2', async (req, res, next) =>
   }
   res.status(200).json(ret);
 });
-//----------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+app.get('/api/getIntroHighScores', async (req, res, next) => {
+  console.log('We are currently in the Get Intro HighScores API');
+  console.log(req.body);
+  const {
+    numberOfSpots
+  } = req.body;
+  var leaderBoard = await leaderboardModelIntro.find().sort({'HighScore' : -1}).limit(numberOfSpots).then(reviews => {res.status(200).json(reviews)});
+  //leaderBoard = JSON.stringify(leaderBoard);
+  //res.status(200).json(leaderBoard);
+});
+
+
 //Fucntions to Support the API End Points
 function updateTotal (_id, credentials)
 {
@@ -563,6 +614,7 @@ function updateTotal (_id, credentials)
   var totalHighScore = introHighScore + CS1HighScore + CS2HighScore;
   var totalTotalCorrect = introTotalCorrect + CS1TotalCorrect + CS2TotalCorrect;
   var totalTotalAttempted = introTotalAttempted + CS1TotalAttempted + CS2TotalAttempted;
+  console.log("totalHighScore: " + introHighScore + " totalTotalCorrect: " + introTotalCorrect + " totalTotalAttemtped: " + introTotalAttempted );
   console.log("totalHighScore: " + totalHighScore + " totalTotalCorrect: " + totalTotalCorrect + " totalTotalAttemtped: " + totalTotalAttempted );
   // Finished Updating Values
   userModel.findOneAndUpdate
@@ -583,6 +635,8 @@ function updateTotal (_id, credentials)
     }
   );
 }
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 // Add API end points here that call external functions 
 app.get('/', function(request, response) { response.send('Hello World!') });
 
