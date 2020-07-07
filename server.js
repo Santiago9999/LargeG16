@@ -36,6 +36,7 @@ const leaderboardSchema = new Schema (
   UserID : {type: String},
   FirstName: { type: String },
   LastName: { type: String }, 
+  HighScore: { type: Number },
   TotalCorrect: {type: Number},
   TotalAttempted: {type: Number}
 });
@@ -67,12 +68,17 @@ mongoose.connection.on('error', function(error) {
 // Initializing Models
 const userModel = mongoose.model("user", UsersSchema);
 const leaderboardModelIntro = mongoose.model("leaderboardIntro", leaderboardSchema);
+const leaderboardModelCS1 = mongoose.model("leaderboardCS1", leaderboardSchema);
+const leaderboardModelCS2 = mongoose.model("leaderboardCS2", leaderboardSchema);
 
 //----------------------------------------------------------------------------------------------------------
 const numberOfQuestionsPerSession = 20;
 var id = '';
 var firstName = '';
 var lastName = '';
+var phase1 = '';
+var phase2 = '';
+var phase3 = '';
 var error = '';
 //----------------------------------------------------------------------------------------------------------
 
@@ -218,12 +224,12 @@ app.post('/api/register', async (req, res, next) =>
   {
     console.log('User Already Exist')
     error = 'User Name Already Exist';
-    var ret =
-    {
-      firstName : firstName,
-      lastName : lastName,
-      error : error 
-    }
+  }
+  var ret =
+  {
+    firstName : firstName,
+    lastName : lastName,
+    error : error 
   }
    // Everything is Good, we are sending back a JSON Package
    res.status(200).json(ret);
@@ -265,21 +271,21 @@ app.post('/api/updateIntro', async (req, res, next) =>
       if (err)
       {
         console.log(err);
-        error = "Unsucessfully Updated Intro";
+        phase1 = "Unsucessfully Updated Intro";
       }
       else
       {
-        error = "Sucessfully Updated Intro";
+        phase1 = "Sucessfully Updated Intro";
       }
     }
   );
   if (await updateTotal(_id, credentials))
   {
-    error = "Sucessfully Updated Intro But not Total";
+    phase2 = "Unsucessfully Updated Total";
   }
   else
   {
-    error = "Sucessfully Updated Intro and Total";
+    phase2 = "Sucessfully Updated Total";
   }
   if (await leaderboardModelIntro.exists({UserID: _id}))
   {
@@ -304,6 +310,7 @@ app.post('/api/updateIntro', async (req, res, next) =>
         UserID : _id,
         FirstName: firstName,
         LastName:  lastName , 
+        HighScore: introHighScore,
         TotalCorrect: introTotalCorrect,
         TotalAttempted: introTotalAttempted
       }
@@ -311,22 +318,20 @@ app.post('/api/updateIntro', async (req, res, next) =>
     console.log("Ready To add to instance")
     leaderboardInstance.save().then(result => 
       {
+        phase3 = "Sucessfully Updated LeaderBoard Intro" ;
         console.log(result);
-        error = 'Sucess';
-        var ret =
-        {
-          error : error 
-        }
       })
       .catch(err => 
       {
-        error = err;
+        phase3 = "Unsucessfully Updated LeaderBoard Intro" ;
         console.log('Save() Exception: ', err);
       });
   }
   var ret =
   {
-    error : error 
+    Phase1 : phase1,
+    Phase2 : phase2,
+    Phase3 : phase3
   }
   res.status(200).json(ret);
 });
@@ -367,25 +372,68 @@ app.post('/api/updateCS1', async (req, res, next) =>
       if (err)
       {
         console.log(err);
-        error = "Unucessfully Updated CS1";
+        phase1 = "Unsucessfully Updated CS1";
       }
       else
       {
-        error = "Sucessfully Updated CS1";
+        phase1 = "Sucessfully Updated CS1";
       }
     }
   );
   if (await updateTotal(_id, credentials))
   {
-    error = "Sucessfully Updated CS1 But not Total";
+    phase2 = "Unsucessfully Updated Total CS1";
   }
   else
   {
-    error = "Sucessfully Updated CS1 and Total";
+    phase2 = "Sucessfully Updated Total CS1";
+  }
+  
+  if (await leaderboardModelCS1.exists({UserID: _id}))
+  {
+    await leaderboardModelCS1.findOneAndUpdate
+    (
+      {"UserID" : _id},
+      {"$set" : {"TotalCorrect" : introTotalCorrect, "TotalAttempted" : introTotalAttempted}},
+      function(err)
+      {
+        if (err)
+        {
+          console.log(err)
+        }
+      }
+    );
+  }
+  else
+  {
+    var leaderboardInstance = new leaderboardModelCS1
+    (
+      {
+        UserID : _id,
+        FirstName: firstName,
+        LastName:  lastName , 
+        HighScore: CS1HighScore,
+        TotalCorrect: CS1TotalCorrect,
+        TotalAttempted: CS1TotalAttempted
+      }
+    )
+    console.log("Ready To add to instance")
+    leaderboardInstance.save().then(result => 
+      {
+        phase3 = "Sucessfully Updated LeaderBoard CS1" ;
+        console.log(result);
+      })
+      .catch(err => 
+      {
+        phase3 = "Unsucessfully Updated LeaderBoard CS1" ;
+        console.log('Save() Exception: ', err);
+      });
   }
   var ret =
   {
-    error : error 
+    Phase1 : phase1,
+    Phase2 : phase2,
+    Phase3 : phase3
   }
   res.status(200).json(ret);
 });
@@ -427,25 +475,67 @@ app.post('/api/updateCS2', async (req, res, next) =>
       if (err)
       {
         console.log(err);
-        error = "Unsucessfully Updated CS2";
+        phase1 = "Unsucessfully Updated CS2";
       }
       else
       {
-        error = "Sucessfully Updated CS2";
+        phase1 = "Sucessfully Updated CS2";
       }
     }
   );
   if (await updateTotal(_id, credentials))
   {
-    error = "Sucessfully Updated CS2  But not Total";
+    phase2 = "Unsucessfully Updated Total CS2";
   }
   else
   {
-    error = "Sucessfully Updated CS2 and Total";
+    phase2 = "Sucessfully Updated Total CS2";
+  }
+  if (await leaderboardModelCS2.exists({UserID: _id}))
+  {
+    await leaderboardModelCS2.findOneAndUpdate
+    (
+      {"UserID" : _id},
+      {"$set" : {"TotalCorrect" : introTotalCorrect, "TotalAttempted" : introTotalAttempted}},
+      function(err)
+      {
+        if (err)
+        {
+          console.log(err)
+        }
+      }
+    );
+  }
+  else
+  {
+    var leaderboardInstance = new leaderboardModelCS2
+    (
+      {
+        UserID : _id,
+        FirstName: firstName,
+        LastName:  lastName , 
+        HighScore: CS2HighScore,
+        TotalCorrect: CS2TotalCorrect,
+        TotalAttempted: CS2TotalAttempted
+      }
+    )
+    console.log("Ready To add to instance")
+    leaderboardInstance.save().then(result => 
+      {
+        phase3 = "Sucessfully Updated LeaderBoard CS2" ;
+        console.log(result);
+      })
+      .catch(err => 
+      {
+        phase3 = "Unsucessfully Updated LeaderBoard CS2" ;
+        console.log('Save() Exception: ', err);
+      });
   }
   var ret =
   {
-    error : error 
+    Phase1 : phase1,
+    Phase2 : phase2,
+    Phase3 : phase3
   }
   res.status(200).json(ret);
 });
