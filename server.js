@@ -315,7 +315,7 @@ app.post('/api/updateIntro', async (req, res, next) => {
   const postUpdateCredentials = await userModel.find({
     _id: _id
   });
-  var val2 = await getTotalScores(postUpdateCredentials);
+  var val2 = getTotalScores(postUpdateCredentials);
   await updateTotal(val2[0], parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
@@ -357,7 +357,7 @@ app.post('/api/updateCS1', async (req, res, next) => {
   const postUpdateCredentials = await userModel.find({
     _id: _id
   });
-  var val2 = await getTotalScores(postUpdateCredentials);
+  var val2 = getTotalScores(postUpdateCredentials);
   await updateTotal(val2[0], parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
@@ -398,7 +398,7 @@ app.post('/api/updateCS2', async (req, res, next) => {
   const postUpdateCredentials = await userModel.find({
     _id: _id
   });
-  var val2 = await getTotalScores(postUpdateCredentials);
+  var val2 = getTotalScores(postUpdateCredentials);
   await updateTotal(val2[0], parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
@@ -478,7 +478,7 @@ function getScores (credentials, category,score)
   var val = [scoresID,highScore,totalCorrect,totalAttempted]
   return val
 }
-async function getTotalScores (postUpdateCredentials)
+function getTotalScores (postUpdateCredentials)
 {
   var totalHighScore = getTotalHighScore(postUpdateCredentials);
   var totalCorrect =  getTotalCorrect(postUpdateCredentials);
