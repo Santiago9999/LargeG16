@@ -263,7 +263,7 @@ app.post('/api/updateIntro', async (req, res, next) => {
   }
   introTotalCorrect = parseInt(introTotalCorrect + parseInt(score));
   introTotalAttempted += numberOfQuestionsPerSession;
-  // Finished Updating Values on User Table
+  //Finished Updating Values on User Table
   await userModel.findOneAndUpdate({
       "Scores.Intro._id": introScoresID
     }, {
@@ -303,70 +303,73 @@ app.post('/api/updateIntro', async (req, res, next) => {
   var totalTotalAttempted = introTotalAttempted + CS1TotalAttempted + CS2TotalAttempted;
   console.log("totalHighScore: " + totalHighScore + " totalTotalCorrect: " + totalTotalCorrect + " totalTotalAttemtped: " + totalTotalAttempted);
   // Finished Updating Values for Total
-  await userModel.findOneAndUpdate({
-      "Scores.Total._id": totalScoresID
-    }, {
-      "$set": {
-        "Scores.0.Total.$.HighScore": totalHighScore,
-        "Scores.0.Total.$.TotalCorrect": totalTotalCorrect,
-        "Scores.0.Total.$.TotalAttempted": totalTotalAttempted
-      }
-    },
-    function (err, result) {
-      if (err) {
-        console.log(err);
-        error = err;
-        phase2 = "Unsucessfully Updated Total";
-      } else {
-        phase2 = "Sucessfully Updated Total";
-      }
-    }
-  );
+  // await userModel.findOneAndUpdate({
+  //     "Scores.Total._id": totalScoresID
+  //   }, {
+  //     "$set": {
+  //       "Scores.0.Total.$.HighScore": totalHighScore,
+  //       "Scores.0.Total.$.TotalCorrect": totalTotalCorrect,
+  //       "Scores.0.Total.$.TotalAttempted": totalTotalAttempted
+  //     }
+  //   },
+  //   function (err, result) {
+  //     if (err) {
+  //       console.log(err);
+  //       error = err;
+  //       phase2 = "Unsucessfully Updated Total";
+  //     } else {
+  //       phase2 = "Sucessfully Updated Total";
+  //     }
+  //   }
+  // );
+  await updateTotal (totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted);
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
   // Checking To see if record Exist
-  if (await leaderboardModelIntro.exists({
-    // Fix this 
-      UserID: _id
-    })) {
-    await leaderboardModelIntro.findOneAndUpdate({
-        "UserID": _id
-      }, {
-        "$set": {
-          "TotalCorrect": introTotalCorrect,
-          "TotalAttempted": introTotalAttempted
-        }
-      },
-      function (err) {
-        if (err) {
-          console.log(err)
-          phase3 = "Unsucessfully Updated LeaderBoard Intro";
-          error = err;
-        } else {
-          console.log("Updated LeaderBoard")
-          phase3 = "Sucessfully Updated LeaderBoard Intro";
-        }
-      }
-    );
-  } else {
-    var leaderboardInstance = new leaderboardModelIntro({
-      UserID: _id,
-      FirstName: firstName,
-      LastName: lastName,
-      HighScore: credentials[0].Scores[0].Total[0].HighScore,
-      TotalCorrect: credentials[0].Scores[0].Total[0].TotalCorrect,
-      TotalAttempted: credentials[0].Scores[0].Total[0].TotalAttempted
-    })
-    console.log("Ready To add to instance")
-    await leaderboardInstance.save().then(result => {
-      console.log("Created LeaderBoard")
-        phase3 = "Sucessfully Updated LeaderBoard Intro";
-      })
-      .catch(err => {
-        phase3 = "Unsucessfully Updated LeaderBoard Intro";
-        console.log('Save() Exception: ', err);
-      });
-  }
+  await updateLeaderboard (leaderboardModelIntro,credentials, _id, introHighScore, introTotalCorrect, introTotalAttempted)
+  // if (await leaderboardModelIntro.exists({
+  //   // Fix this 
+  //     UserID: _id
+  //   })) {
+  //   await leaderboardModelIntro.findOneAndUpdate({
+  //       "UserID": _id
+  //     }, {
+  //       "$set": {
+  //         "HighScore": introHighScore,
+  //         "TotalCorrect": introTotalCorrect,
+  //         "TotalAttempted": introTotalAttempted
+  //       }
+  //     },
+  //     function (err) {
+  //       if (err) {
+  //         console.log(err)
+  //         phase3 = "Unsucessfully Updated LeaderBoard Intro";
+  //         error = err;
+  //       } else {
+  //         console.log("Updated LeaderBoard")
+  //         phase3 = "Sucessfully Updated LeaderBoard Intro";
+  //       }
+  //     }
+  //   );
+  // } else {
+  //   var leaderboardInstance = new leaderboardModelIntro({
+  //     UserID: _id,
+  //     FirstName: firstName,
+  //     LastName: lastName,
+  //     HighScore: credentials[0].Scores[0].Total[0].HighScore,
+  //     TotalCorrect: credentials[0].Scores[0].Total[0].TotalCorrect,
+  //     TotalAttempted: credentials[0].Scores[0].Total[0].TotalAttempted
+  //   })
+  //   console.log("Ready To add to instance")
+  //   await leaderboardInstance.save().then(result => {
+  //     console.log("Created LeaderBoard")
+  //       phase3 = "Sucessfully Updated LeaderBoard Intro";
+  //     })
+  //     .catch(err => {
+  //       phase3 = "Unsucessfully Updated LeaderBoard Intro";
+  //       console.log('Save() Exception: ', err);
+  //     });
+  // }
   var ret = {
     Phase1: phase1,
     Phase2: phase2,
@@ -586,54 +589,91 @@ app.get('/api/getIntroHighScores', async (req, res, next) => {
     numberOfSpots
   } = req.body;
   var leaderBoard = await leaderboardModelIntro.find().sort({'HighScore' : -1}).limit(numberOfSpots).then(reviews => {res.status(200).json(reviews)});
-  //leaderBoard = JSON.stringify(leaderBoard);
-  //res.status(200).json(leaderBoard);
 });
-
-
+app.get('/api/getCS1HighScores', async (req, res, next) => {
+  console.log('We are currently in the Get Intro HighScores API');
+  console.log(req.body);
+  const {
+    numberOfSpots
+  } = req.body;
+  var leaderBoard = await leaderboardModelCS1.find().sort({'HighScore' : -1}).limit(numberOfSpots).then(reviews => {res.status(200).json(reviews)});
+});
+app.get('/api/getCS2HighScores', async (req, res, next) => {
+  console.log('We are currently in the Get Intro HighScores API');
+  console.log(req.body);
+  const {
+    numberOfSpots
+  } = req.body;
+  var leaderBoard = await leaderboardModelCS2.find().sort({'HighScore' : -1}).limit(numberOfSpots).then(reviews => {res.status(200).json(reviews)});
+});
 //Fucntions to Support the API End Points
-function updateTotal (_id, credentials)
+async function updateTotal (totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted)
 {
-  // Intro Scores
-  var introHighScore = credentials[0].Scores[0].Intro[0].HighScore;
-  var introTotalCorrect = credentials[0].Scores[0].Intro[0].TotalCorrect;
-  var introTotalAttempted = credentials[0].Scores[0].Intro[0].TotalAttempted;
-  
-  // CS1 Scores
-  var CS1HighScore = credentials[0].Scores[0].CS1[0].HighScore;
-  var CS1TotalCorrect = credentials[0].Scores[0].CS1[0].TotalCorrect;
-  var CS1TotalAttempted = credentials[0].Scores[0].CS1[0].TotalAttempted;
-  
-  // CS2 Scores
-  var CS2HighScore = credentials[0].Scores[0].CS2[0].HighScore;
-  var CS2TotalCorrect = credentials[0].Scores[0].CS2[0].TotalCorrect;
-  var CS2TotalAttempted = credentials[0].Scores[0].CS2[0].TotalAttempted;
-  
-  // Id to update 
-  var totalScoresID = credentials[0].Scores[0].Total[0]._id;
-  var totalHighScore = introHighScore + CS1HighScore + CS2HighScore;
-  var totalTotalCorrect = introTotalCorrect + CS1TotalCorrect + CS2TotalCorrect;
-  var totalTotalAttempted = introTotalAttempted + CS1TotalAttempted + CS2TotalAttempted;
-  console.log("totalHighScore: " + introHighScore + " totalTotalCorrect: " + introTotalCorrect + " totalTotalAttemtped: " + introTotalAttempted );
-  console.log("totalHighScore: " + totalHighScore + " totalTotalCorrect: " + totalTotalCorrect + " totalTotalAttemtped: " + totalTotalAttempted );
-  // Finished Updating Values
-  userModel.findOneAndUpdate
-  (
-    {"Scores.Total._id" : totalScoresID},
-    {"$set" : {"Scores.0.Total.$.HighScore" : totalHighScore , "Scores.0.Total.$.TotalCorrect" : totalTotalCorrect , "Scores.0.Total.$.TotalAttempted" : totalTotalAttempted }},
-    function(err, result)
-    {
-      if (err)
-      {
-        console.log(err);
-        return false;
-      }
-      else
-      {
-        return true;
-      }
+  userModel.findOneAndUpdate({
+    "Scores.Total._id": totalScoresID
+  }, {
+    "$set": {
+      "Scores.0.Total.$.HighScore": totalHighScore,
+      "Scores.0.Total.$.TotalCorrect": totalTotalCorrect,
+      "Scores.0.Total.$.TotalAttempted": totalTotalAttempted
     }
-  );
+  },
+  function (err, result) {
+    if (err) {
+      console.log(err);
+      error = err;
+      phase2 = "Unsucessfully Updated Total";
+    } else {
+      phase2 = "Sucessfully Updated Total";
+    }
+  }
+);
+}
+async function updateLeaderboard (model, credentials, _id, HighScore, totalCorrect, totalAttempted)
+{
+  if (await model.exists({
+    // Fix this 
+      UserID: _id
+    })) {
+    await model.findOneAndUpdate({
+        "UserID": _id
+      }, {
+        "$set": {
+          "HighScore": HighScore,
+          "TotalCorrect": totalCorrect,
+          "TotalAttempted": totalAttempted
+        }
+      },
+      function (err) {
+        if (err) {
+          console.log(err)
+          phase3 = "Unsucessfully Updated LeaderBoard Intro";
+          error = err;
+        } else {
+          console.log("Updated LeaderBoard")
+          phase3 = "Sucessfully Updated LeaderBoard Intro";
+        }
+      }
+    );
+  } else {
+    var leaderboardInstance = new model({
+      UserID: _id,
+      FirstName: firstName,
+      LastName: lastName,
+      HighScore: credentials[0].Scores[0].Total[0].HighScore,
+      TotalCorrect: credentials[0].Scores[0].Total[0].TotalCorrect,
+      TotalAttempted: credentials[0].Scores[0].Total[0].TotalAttempted
+    })
+    console.log("Ready To add to instance")
+    await leaderboardInstance.save().then(result => {
+      console.log("Created LeaderBoard")
+        phase3 = "Sucessfully Updated LeaderBoard Intro";
+      })
+      .catch(err => {
+        phase3 = "Unsucessfully Updated LeaderBoard Intro";
+        console.log('Save() Exception: ', err);
+      });
+  }
 }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
