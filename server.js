@@ -308,31 +308,19 @@ app.post('/api/updateIntro', async (req, res, next) => {
     }
   });
   // Getting Previous Values
-  var introHighScore = credentials[0].Scores[0].Intro[0].HighScore;
-  var introTotalCorrect = credentials[0].Scores[0].Intro[0].TotalCorrect;
-  var introTotalAttempted = credentials[0].Scores[0].Intro[0].TotalAttempted;
-  var introScoresID = credentials[0].Scores[0].Intro[0]._id;
-  // Updating Previous Values
-  if (parseInt(score) > introHighScore) {
-    introHighScore = parseInt(score);
-  }
-  introTotalCorrect = parseInt(introTotalCorrect + parseInt(score));
-  introTotalAttempted += numberOfQuestionsPerSession;
-  await updateUser(introScoresID,"Intro", introHighScore, introTotalCorrect, introTotalAttempted);
+  var val = getScores(credentials, 'Intro',score);
+  await updateUser(val[0],'Intro', parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating Total Table
-  var totalScoresID = credentials[0].Scores[0].Total[0]._id;
   const postUpdateCredentials = await userModel.find({
     _id: _id
   });
-  var totalHighScore = await getTotalHighScore(postUpdateCredentials);
-  var totalTotalCorrect = await getTotalCorrect(postUpdateCredentials);
-  var totalTotalAttempted = await getTotalAttempted(postUpdateCredentials);
-  await updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted);
+  var val2 = await getTotalScores(postUpdateCredentials);
+  await updateTotal(val2[0], parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
   // Checking To see if record Exist
-  await updateLeaderboard(leaderboardModelIntro, postUpdateCredentials, _id, introHighScore, introTotalCorrect, introTotalAttempted);
+  await updateLeaderboard(leaderboardModelIntro, postUpdateCredentials, _id, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   await updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, totalHighScore, totalTotalCorrect, totalTotalAttempted);
   var ret = {
     Phase1: phase1,
@@ -361,34 +349,21 @@ app.post('/api/updateCS1', async (req, res, next) => {
     }
   });
   // Getting Previous Values
-  var CS1HighScore = credentials[0].Scores[0].CS1[0].HighScore;
-  var CS1TotalCorrect = credentials[0].Scores[0].CS1[0].TotalCorrect;
-  var CS1TotalAttempted = credentials[0].Scores[0].CS1[0].TotalAttempted;
-  var CS1ScoresID = credentials[0].Scores[0].CS1[0]._id;
-  var val2 = getScores(credentials, 'CS1',score);
-  console.log("This is in End Point ");
-  console.log(val2);
-  console.log(await val2[0]);
-  console.log(await val2[1]);
-  console.log(await val2[2]);
-  console.log(await val2[3]);
-  //await updateUser(values[0],"CS1", parseInt(values[1]), parseInt(values[2]), parseInt(values[3]));
+  var val = getScores(credentials, 'CS1',score);
+  await updateUser(val[0],"CS1", parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   //await updateUser(CS1ScoresID,"CS1", CS1HighScore, CS1TotalCorrect, CS1TotalAttempted);
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating Total Table
-  var totalScoresID = credentials[0].Scores[0].Total[0]._id;
   const postUpdateCredentials = await userModel.find({
     _id: _id
   });
-  var totalHighScore = await getTotalHighScore(postUpdateCredentials);
-  var totalTotalCorrect = await getTotalCorrect(postUpdateCredentials);
-  var totalTotalAttempted = await getTotalAttempted(postUpdateCredentials);
-  await updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted);
+  var val2 = await getTotalScores(postUpdateCredentials);
+  await updateTotal(val2[0], parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
   // Checking To see if record Exist
-  await updateLeaderboard(leaderboardModelCS1, postUpdateCredentials, _id, CS1HighScore, CS1TotalCorrect, CS1TotalAttempted);
-  await updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, totalHighScore, totalTotalCorrect, totalTotalAttempted);
+  await updateLeaderboard(leaderboardModelCS1, postUpdateCredentials, _id, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  await updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, parseInt(val2[0]), parseInt(val2[1]), parseInt(val2[2]));
   var ret = {
     Phase1: phase1,
     Phase2: phase2,
@@ -416,34 +391,20 @@ app.post('/api/updateCS2', async (req, res, next) => {
     }
   });
   // Getting Previous Values
-  var CS2HighScore = credentials[0].Scores[0].CS2[0].HighScore;
-  var CS2TotalCorrect = credentials[0].Scores[0].CS2[0].TotalCorrect;
-  var CS2TotalAttempted = credentials[0].Scores[0].CS2[0].TotalAttempted;
-  var CS2ScoresID = credentials[0].Scores[0].CS2[0]._id;
-
-  // Updating Previous Values
-  if (parseInt(score) > CS2HighScore) {
-    CS2HighScore = parseInt(score);
-  }
-  CS2TotalCorrect = parseInt(CS2TotalCorrect + parseInt(score));
-  CS2TotalAttempted += numberOfQuestionsPerSession;
-  // Finished Updating Values
-  await updateUser(CS2ScoresID,"CS2", CS2HighScore, CS2TotalCorrect, CS2TotalAttempted);
+  var val = getScores(credentials, 'CS2',score);
+  await updateUser(val[0],'CS2', parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating Total Table
-  var totalScoresID = credentials[0].Scores[0].Total[0]._id;
   const postUpdateCredentials = await userModel.find({
     _id: _id
   });
-  var totalHighScore = await getTotalHighScore(postUpdateCredentials);
-  var totalTotalCorrect = await getTotalCorrect(postUpdateCredentials);
-  var totalTotalAttempted = await getTotalAttempted(postUpdateCredentials);
-  await updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted);
+  var val2 = await getTotalScores(postUpdateCredentials);
+  await updateTotal(val2[0], parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
   // Checking To see if record Exist
-  await updateLeaderboard(leaderboardModelCS2, postUpdateCredentials, _id, CS2HighScore, CS2TotalCorrect, CS2TotalAttempted);
-  await updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, totalHighScore, totalTotalCorrect, totalTotalAttempted);
+  await updateLeaderboard(leaderboardModelCS2, postUpdateCredentials, _id, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  await updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, parseInt(val2[0]), parseInt(val2[1]), parseInt(val2[2]));
   var ret = {
     Phase1: phase1,
     Phase2: phase2,
@@ -502,7 +463,7 @@ app.get('/api/getTotalHighScores', async (req, res, next) => {
   });
 });
 //Fucntions to Support the API End Points
-async function getScores (credentials, category,score)
+function getScores (credentials, category,score)
 {
   var highScore = credentials[0].Scores[0][category][0].HighScore;
   var totalCorrect = credentials[0].Scores[0][category][0].TotalCorrect
@@ -515,12 +476,15 @@ async function getScores (credentials, category,score)
   totalAttempted += numberOfQuestionsPerSession;
 
   var val = [scoresID,highScore,totalCorrect,totalAttempted]
-  console.log("This is in function");
-  console.log(val[0]);
-  console.log(val[1]);
-  console.log(val[2]);
-  console.log(val[3]);
-
+  return val
+}
+async function getTotalScores (postUpdateCredentials)
+{
+  var totalHighScore = await getTotalHighScore(postUpdateCredentials);
+  var totalCorrect = await getTotalCorrect(postUpdateCredentials);
+  var totalAttempted = await getTotalAttempted(postUpdateCredentials);
+  var totalID = postUpdateCredentials[0].Scores[0].Total[0]._id;
+  var val = [totalID,totalHighScore,totalCorrect,totalAttempted];
   return val
 }
 async function getTotalHighScore(credentials) {
