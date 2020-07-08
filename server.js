@@ -80,7 +80,7 @@ const {
 } = require('./models/users');
 
 const app = express();
-const PORT = 3001;
+const PORT = 3002;
 const MONGODB_URI = "mongodb+srv://Wildsoul:Katara@cluster0-xs7yp.mongodb.net/CS2EZ?retryWrites=true&w=majority";
 
 // app.use(cors())
@@ -120,6 +120,30 @@ var phase1 = '';
 var phase2 = '';
 var phase3 = '';
 var error = '';
+class values  {
+  constructor(id, high, totalC, totalA) {
+    this.id = id;
+    this.high = high;
+    this.totalC = totalC;
+    this.totalA = totalA;
+  }
+  getID()
+  {
+    return this.id;
+  }
+  getHigh()
+  {
+    return this.high;
+  }
+  getTotalC()
+  {
+    return this.totalC;
+  }
+  getTotalA()
+  {
+    return this.totalA;
+  }
+}
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 app.post('/api/login', async (req, res, next) => {
@@ -341,14 +365,15 @@ app.post('/api/updateCS1', async (req, res, next) => {
   var CS1TotalCorrect = credentials[0].Scores[0].CS1[0].TotalCorrect;
   var CS1TotalAttempted = credentials[0].Scores[0].CS1[0].TotalAttempted;
   var CS1ScoresID = credentials[0].Scores[0].CS1[0]._id;
-  // Updating Previous Values
-  if (parseInt(score) > CS1HighScore) {
-    CS1HighScore = parseInt(score);
-  }
-  CS1TotalCorrect = parseInt(CS1TotalCorrect + parseInt(score));
-  CS1TotalAttempted += numberOfQuestionsPerSession;
-  await updateUser(CS1ScoresID,"CS1", CS1HighScore, CS1TotalCorrect, CS1TotalAttempted);
-  //await updateUserCS1(CS1ScoresID, CS1HighScore, CS1TotalCorrect, CS1TotalAttempted);
+  var val2 = getScores(credentials, 'CS1',score);
+  console.log("This is in End Point ");
+  console.log(val2);
+  console.log(await val2[0]);
+  console.log(await val2[1]);
+  console.log(await val2[2]);
+  console.log(await val2[3]);
+  //await updateUser(values[0],"CS1", parseInt(values[1]), parseInt(values[2]), parseInt(values[3]));
+  //await updateUser(CS1ScoresID,"CS1", CS1HighScore, CS1TotalCorrect, CS1TotalAttempted);
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating Total Table
   var totalScoresID = credentials[0].Scores[0].Total[0]._id;
@@ -477,6 +502,27 @@ app.get('/api/getTotalHighScores', async (req, res, next) => {
   });
 });
 //Fucntions to Support the API End Points
+async function getScores (credentials, category,score)
+{
+  var highScore = credentials[0].Scores[0][category][0].HighScore;
+  var totalCorrect = credentials[0].Scores[0][category][0].TotalCorrect
+  var totalAttempted = credentials[0].Scores[0][category][0].TotalAttempted;
+  var scoresID = credentials[0].Scores[0][category][0]._id;
+  if (parseInt(score) > highScore) {
+    highScore = parseInt(score);
+  }
+  totalCorrect = parseInt(totalCorrect + parseInt(score));
+  totalAttempted += numberOfQuestionsPerSession;
+
+  var val = [scoresID,highScore,totalCorrect,totalAttempted]
+  console.log("This is in function");
+  console.log(val[0]);
+  console.log(val[1]);
+  console.log(val[2]);
+  console.log(val[3]);
+
+  return val
+}
 async function getTotalHighScore(credentials) {
   // Intro Scores
   var introHighScore = credentials[0].Scores[0].Intro[0].HighScore;
