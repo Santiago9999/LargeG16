@@ -1,5 +1,5 @@
 //server.js
-const express = require('express'); 
+const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 // ../models/users.model not js(possible fix)
@@ -10,66 +10,106 @@ var Schema = mongoose.Schema;
 //const mongoClient = require('mongodb').MongoClient;
 //----------------------------------------------------------------------------------------------------------
 // Schemas (making them external after)
-const ScoresSchema = new Schema({ 
-  HighScore: {type: Number , default: 0},
-  TotalCorrect: {type: Number , default: 0},
-  TotalAttempted: {type: Number , default: 0}
+const ScoresSchema = new Schema({
+  HighScore: {
+    type: Number,
+    default: 0
+  },
+  TotalCorrect: {
+    type: Number,
+    default: 0
+  },
+  TotalAttempted: {
+    type: Number,
+    default: 0
+  }
 });
 
-const UserScores = new Schema({ 
-	Intro: [ScoresSchema],
-	CS1: [ScoresSchema],
+const UserScores = new Schema({
+  Intro: [ScoresSchema],
+  CS1: [ScoresSchema],
   CS2: [ScoresSchema],
-  Total:  [ScoresSchema]
+  Total: [ScoresSchema]
 });
 
-const UsersSchema = new Schema({ 
-	FirstName: { type: String },
-	LastName: { type: String }, 
-	Email: { type: String },
-	Password: { type: String },
-	Scores: [UserScores]
+const UsersSchema = new Schema({
+  FirstName: {
+    type: String
+  },
+  LastName: {
+    type: String
+  },
+  Email: {
+    type: String
+  },
+  Password: {
+    type: String
+  },
+  Scores: [UserScores]
 });
 
-const leaderboardSchema = new Schema (
-{
-  UserID : {type: String},
-  FirstName: { type: String },
-  LastName: { type: String }, 
-  HighScore: { type: Number },
-  TotalCorrect: {type: Number},
-  TotalAttempted: {type: Number}
+const leaderboardSchema = new Schema({
+  UserID: {
+    type: String
+  },
+  FirstName: {
+    type: String
+  },
+  LastName: {
+    type: String
+  },
+  HighScore: {
+    type: Number
+  },
+  TotalCorrect: {
+    type: Number
+  },
+  TotalAttempted: {
+    type: Number
+  }
 });
 //----------------------------------------------------------------------------------------------------------
 
 const router = require('./routes/index');
-const { response, request } = require('express');
-const { schema } = require('./models/users');
+const {
+  response,
+  request
+} = require('express');
+const {
+  schema
+} = require('./models/users');
 
-const app = express(); 
-const PORT = 3001; 
-const MONGODB_URI = "mongodb+srv://Wildsoul:Katara@cluster0-xs7yp.mongodb.net/CS2EZ?retryWrites=true&w=majority"; 
+const app = express();
+const PORT = 3001;
+const MONGODB_URI = "mongodb+srv://Wildsoul:Katara@cluster0-xs7yp.mongodb.net/CS2EZ?retryWrites=true&w=majority";
 
 // app.use(cors())
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({
+  extended: true
+}));
 app.use(express.json());
-app.use('/api', router); 
+app.use('/api', router);
 
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true}); 
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true
+});
 var db = mongoose.connection;
 
-mongoose.connection.once('open', function() { 
+mongoose.connection.once('open', function () {
   console.log('Connected to the Database.');
 });
-mongoose.connection.on('error', function(error) {
+mongoose.connection.on('error', function (error) {
   console.log('Mongoose Connection Error : ' + error);
-}); 
+});
 //----------------------------------------------------------------------------------------------------------
 // Initializing Models
 const userModel = mongoose.model("user", UsersSchema);
 const leaderboardModelIntro = mongoose.model("leaderboardIntro", leaderboardSchema);
 const leaderboardModelCS1 = mongoose.model("leaderboardCS1", leaderboardSchema);
 const leaderboardModelCS2 = mongoose.model("leaderboardCS2", leaderboardSchema);
+const leaderboardModelTotal = mongoose.model("leaderboardTotal", leaderboardSchema);
 
 //----------------------------------------------------------------------------------------------------------
 const numberOfQuestionsPerSession = 20;
@@ -82,33 +122,35 @@ var phase3 = '';
 var error = '';
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-app.post('/api/login', async (req, res, next) => 
-{
+app.post('/api/login', async (req, res, next) => {
   console.log('We are currently in the login API');
   console.log(req.body);
   //response.send(req.body);
-  const { email, password } = req.body;
+  const {
+    email,
+    password
+  } = req.body;
   console.log('Data Recieved Email: ' + email + ' Password: ' + password)
-// Find the Users other fields
-  const credentials = await userModel.find({Email: email, Password:password}, function(err)
-    {
-      if (err)
-      {
-        console.log(err);
-        error = err;
-      }
-    });
+  // Find the Users other fields
+  const credentials = await userModel.find({
+    Email: email,
+    Password: password
+  }, function (err) {
+    if (err) {
+      console.log(err);
+      error = err;
+    }
+  });
   // No errors on using the find function
   console.log(credentials);
-  
-  if (credentials.length > 0)
-  {
+
+  if (credentials.length > 0) {
     id = credentials[0]._id;
     console.log('ID: ' + id);
-  
+
     firstName = credentials[0].FirstName;
     console.log('First Name: ' + firstName);
-  
+
     lastName = credentials[0].LastName;
     console.log('Last Name: ' + lastName);
 
@@ -125,114 +167,103 @@ app.post('/api/login', async (req, res, next) =>
     console.log('Total Array:  ' + totalScore);
 
     error = 'Sucess';
-  }
-  else
-  {
+  } else {
     console.log('No records found');
     error = 'No Records found';
   }
 
   // Creating JSON Package to Send back 
-  var ret =
-  {
-    ID : id, 
-    firstName : firstName,
-    lastName : lastName,
+  var ret = {
+    ID: id,
+    firstName: firstName,
+    lastName: lastName,
     intro: introScore,
     CS1: CS1Score,
     CS2: CS2Score,
     Total: totalScore,
-    error : error 
+    error: error
   }
 
   // Everything is Good, we are sending back a JSON Package
   res.status(200).json(ret);
-  });
+});
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-app.post('/api/register', async (req, res, next) => 
-{
+app.post('/api/register', async (req, res, next) => {
   console.log('We are currently in the register API');
   console.log(req.body);
   //response.send(req.body);
-  const { firstName, lastName, email, password } = req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    password
+  } = req.body;
   console.log('Data Recieved \nEmail: ' + email + ' Password: ' + password + ' FirstName: ' + firstName + ' LastName: ' + lastName);
   // Check if User already Exist
-  const credentials = await userModel.find({Email: email, Password:password}, function(err)
-  {
-    if (err)
-    {
+  const credentials = await userModel.find({
+    Email: email,
+    Password: password
+  }, function (err) {
+    if (err) {
       console.log(err);
       error = err;
     }
   });
 
-  if (credentials.length == 0)
-  {
+  if (credentials.length == 0) {
     console.log('No records Found');
-    var userInstance = new userModel
-    ({
-      FirstName: firstName, 
+    var userInstance = new userModel({
+      FirstName: firstName,
       LastName: lastName,
       Email: email,
       Password: password,
-      Scores: [
-      {
-        Intro: 
-        [{
-          HighScore: 0,
-          TotalCorrect: 0,
-          TotalAttempted: 0
-        }], 
-        CS1 : [
-        {
-          HighScore: 0,
-          TotalCorrect: 0,
-          TotalAttempted: 0
-        }], 
-        CS2 : [
-        {
+      Scores: [{
+        Intro: [{
           HighScore: 0,
           TotalCorrect: 0,
           TotalAttempted: 0
         }],
-        Total : [
-          {
-            HighScore: 0,
-            TotalCorrect: 0,
-            TotalAttempted: 0
-          }]
+        CS1: [{
+          HighScore: 0,
+          TotalCorrect: 0,
+          TotalAttempted: 0
+        }],
+        CS2: [{
+          HighScore: 0,
+          TotalCorrect: 0,
+          TotalAttempted: 0
+        }],
+        Total: [{
+          HighScore: 0,
+          TotalCorrect: 0,
+          TotalAttempted: 0
+        }]
       }]
     });
-    userInstance.save().then(result => 
-    {
-      console.log(result);
-      error = 'Sucess';
-      var ret =
-      {
-        firstName : firstName,
-        lastName : lastName,
-        error : error 
-      }
-    })
-    .catch(err => 
-    {
-      error = err;
-      console.log('Save() Exception: ', err);
-    });
-  }
-  else
-  {
+    userInstance.save().then(result => {
+        console.log(result);
+        error = 'Sucess';
+        var ret = {
+          firstName: firstName,
+          lastName: lastName,
+          error: error
+        }
+      })
+      .catch(err => {
+        error = err;
+        console.log('Save() Exception: ', err);
+      });
+  } else {
     console.log('User Already Exist')
     error = 'User Name Already Exist';
   }
-  var ret =
-  {
-    firstName : firstName,
-    lastName : lastName,
-    error : error 
+  var ret = {
+    firstName: firstName,
+    lastName: lastName,
+    error: error
   }
-   // Everything is Good, we are sending back a JSON Package
-   res.status(200).json(ret);
+  // Everything is Good, we are sending back a JSON Package
+  res.status(200).json(ret);
 });
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 app.post('/api/updateIntro', async (req, res, next) => {
@@ -263,19 +294,22 @@ app.post('/api/updateIntro', async (req, res, next) => {
   }
   introTotalCorrect = parseInt(introTotalCorrect + parseInt(score));
   introTotalAttempted += numberOfQuestionsPerSession;
-  await updateUser (introScoresID, introHighScore, introTotalCorrect, introTotalAttempted);
+  await updateUser(introScoresID,"Intro", introHighScore, introTotalCorrect, introTotalAttempted);
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating Total Table
   var totalScoresID = credentials[0].Scores[0].Total[0]._id;
-  const postUpdateCredentials = await userModel.find({_id: _id});
+  const postUpdateCredentials = await userModel.find({
+    _id: _id
+  });
   var totalHighScore = await getTotalHighScore(postUpdateCredentials);
-  var totalTotalCorrect = await getTotalCorrect (postUpdateCredentials);
+  var totalTotalCorrect = await getTotalCorrect(postUpdateCredentials);
   var totalTotalAttempted = await getTotalAttempted(postUpdateCredentials);
-  await updateTotal (totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted);
+  await updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted);
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
   // Checking To see if record Exist
-  await updateLeaderboard (leaderboardModelIntro,postUpdateCredentials, _id, introHighScore, introTotalCorrect, introTotalAttempted)
+  await updateLeaderboard(leaderboardModelIntro, postUpdateCredentials, _id, introHighScore, introTotalCorrect, introTotalAttempted);
+  await updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, totalHighScore, totalTotalCorrect, totalTotalAttempted);
   var ret = {
     Phase1: phase1,
     Phase2: phase2,
@@ -285,16 +319,19 @@ app.post('/api/updateIntro', async (req, res, next) => {
   res.status(200).json(ret);
 });
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-app.post('/api/updateCS1', async (req, res, next) => 
-{
-  console.log('We are currently in the Scores API');
+app.post('/api/updateCS1', async (req, res, next) => {
+  console.log('We are currently in the UpdateCS1 API');
   console.log(req.body);
-  const { _id, firstName, lastName, score} = req.body;
-  console.log('Data Recieved \n');
-  const credentials = await userModel.find({_id: _id}, function(err)
-  {
-    if (err)
-    {
+  const {
+    _id,
+    firstName,
+    lastName,
+    score
+  } = req.body;
+  const credentials = await userModel.find({
+    _id: _id
+  }, function (err) {
+    if (err) {
       console.log(err);
       error = err;
     }
@@ -305,98 +342,50 @@ app.post('/api/updateCS1', async (req, res, next) =>
   var CS1TotalAttempted = credentials[0].Scores[0].CS1[0].TotalAttempted;
   var CS1ScoresID = credentials[0].Scores[0].CS1[0]._id;
   // Updating Previous Values
-  if (parseInt(CS1Score) > CS1HighScore)
-  {
-    CS1HighScore = parseInt(CS1Score);
+  if (parseInt(score) > CS1HighScore) {
+    CS1HighScore = parseInt(score);
   }
-  CS1TotalCorrect = parseInt(CS1TotalCorrect + parseInt(CS1Score));
+  CS1TotalCorrect = parseInt(CS1TotalCorrect + parseInt(score));
   CS1TotalAttempted += numberOfQuestionsPerSession;
-  // Finished Updating Values
-  await userModel.findOneAndUpdate
-  (
-    {"Scores.CS1._id" : CS1ScoresID},
-    {"$set" : {"Scores.0.CS1.$.HighScore" : CS1HighScore , "Scores.0.CS1.$.TotalCorrect" : CS1TotalCorrect , "Scores.0.CS1.$.TotalAttempted" : CS1TotalAttempted }},
-    function(err, result)
-    {
-      if (err)
-      {
-        console.log(err);
-        phase1 = "Unsucessfully Updated CS1";
-      }
-      else
-      {
-        phase1 = "Sucessfully Updated CS1";
-      }
-    }
-  );
-  if (await updateTotal(_id, credentials))
-  {
-    phase2 = "Unsucessfully Updated Total CS1";
-  }
-  else
-  {
-    phase2 = "Sucessfully Updated Total CS1";
-  }
-  
-  if (await leaderboardModelCS1.exists({UserID: _id}))
-  {
-    await leaderboardModelCS1.findOneAndUpdate
-    (
-      {"UserID" : _id},
-      {"$set" : {"TotalCorrect" : introTotalCorrect, "TotalAttempted" : introTotalAttempted}},
-      function(err)
-      {
-        if (err)
-        {
-          console.log(err)
-        }
-      }
-    );
-  }
-  else
-  {
-    var leaderboardInstance = new leaderboardModelCS1
-    (
-      {
-        UserID : _id,
-        FirstName: firstName,
-        LastName:  lastName , 
-        HighScore: CS1HighScore,
-        TotalCorrect: CS1TotalCorrect,
-        TotalAttempted: CS1TotalAttempted
-      }
-    )
-    console.log("Ready To add to instance")
-    leaderboardInstance.save().then(result => 
-      {
-        phase3 = "Sucessfully Updated LeaderBoard CS1" ;
-        console.log(result);
-      })
-      .catch(err => 
-      {
-        phase3 = "Unsucessfully Updated LeaderBoard CS1" ;
-        console.log('Save() Exception: ', err);
-      });
-  }
-  var ret =
-  {
-    Phase1 : phase1,
-    Phase2 : phase2,
-    Phase3 : phase3
+  await updateUser(CS1ScoresID,"CS1", CS1HighScore, CS1TotalCorrect, CS1TotalAttempted);
+  //await updateUserCS1(CS1ScoresID, CS1HighScore, CS1TotalCorrect, CS1TotalAttempted);
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  // Updating Total Table
+  var totalScoresID = credentials[0].Scores[0].Total[0]._id;
+  const postUpdateCredentials = await userModel.find({
+    _id: _id
+  });
+  var totalHighScore = await getTotalHighScore(postUpdateCredentials);
+  var totalTotalCorrect = await getTotalCorrect(postUpdateCredentials);
+  var totalTotalAttempted = await getTotalAttempted(postUpdateCredentials);
+  await updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted);
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  // Updating LeaderBoard Table
+  // Checking To see if record Exist
+  await updateLeaderboard(leaderboardModelCS1, postUpdateCredentials, _id, CS1HighScore, CS1TotalCorrect, CS1TotalAttempted);
+  await updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, totalHighScore, totalTotalCorrect, totalTotalAttempted);
+  var ret = {
+    Phase1: phase1,
+    Phase2: phase2,
+    Phase3: phase3,
+    Error: error
   }
   res.status(200).json(ret);
 });
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-app.post('/api/updateCS2', async (req, res, next) => 
-{
-  console.log('We are currently in the Scores API');
+app.post('/api/updateCS2', async (req, res, next) => {
+  console.log('We are currently in the UpdateCS2 API');
   console.log(req.body);
-  const { _id, firstName, lastName, score} = req.body;
-  console.log('Data Recieved \n');
-  const credentials = await userModel.find({_id: _id}, function(err)
-  {
-    if (err)
-    {
+  const {
+    _id,
+    firstName,
+    lastName,
+    score
+  } = req.body;
+  const credentials = await userModel.find({
+    _id: _id
+  }, function (err) {
+    if (err) {
       console.log(err);
       error = err;
     }
@@ -406,85 +395,35 @@ app.post('/api/updateCS2', async (req, res, next) =>
   var CS2TotalCorrect = credentials[0].Scores[0].CS2[0].TotalCorrect;
   var CS2TotalAttempted = credentials[0].Scores[0].CS2[0].TotalAttempted;
   var CS2ScoresID = credentials[0].Scores[0].CS2[0]._id;
-  
+
   // Updating Previous Values
-  if (parseInt(CS2Score) > CS2HighScore)
-  {
-    CS2HighScore = parseInt(CS2Score);
+  if (parseInt(score) > CS2HighScore) {
+    CS2HighScore = parseInt(score);
   }
-  CS2TotalCorrect = parseInt(CS2TotalCorrect + parseInt(CS2Score));
+  CS2TotalCorrect = parseInt(CS2TotalCorrect + parseInt(score));
   CS2TotalAttempted += numberOfQuestionsPerSession;
   // Finished Updating Values
-  await userModel.findOneAndUpdate
-  (
-    {"Scores.CS2._id" : CS2ScoresID},
-    {"$set" : {"Scores.0.CS2.$.HighScore" : CS2HighScore , "Scores.0.CS2.$.TotalCorrect" : CS2TotalCorrect , "Scores.0.CS2.$.TotalAttempted" : CS2TotalAttempted }},
-    function(err, result)
-    {
-      if (err)
-      {
-        console.log(err);
-        phase1 = "Unsucessfully Updated CS2";
-      }
-      else
-      {
-        phase1 = "Sucessfully Updated CS2";
-      }
-    }
-  );
-  if (await updateTotal(_id, credentials))
-  {
-    phase2 = "Unsucessfully Updated Total CS2";
-  }
-  else
-  {
-    phase2 = "Sucessfully Updated Total CS2";
-  }
-  if (await leaderboardModelCS2.exists({UserID: _id}))
-  {
-    await leaderboardModelCS2.findOneAndUpdate
-    (
-      {"UserID" : _id},
-      {"$set" : {"TotalCorrect" : introTotalCorrect, "TotalAttempted" : introTotalAttempted}},
-      function(err)
-      {
-        if (err)
-        {
-          console.log(err)
-        }
-      }
-    );
-  }
-  else
-  {
-    var leaderboardInstance = new leaderboardModelCS2
-    (
-      {
-        UserID : _id,
-        FirstName: firstName,
-        LastName:  lastName , 
-        HighScore: CS2HighScore,
-        TotalCorrect: CS2TotalCorrect,
-        TotalAttempted: CS2TotalAttempted
-      }
-    )
-    console.log("Ready To add to instance")
-    leaderboardInstance.save().then(result => 
-      {
-        phase3 = "Sucessfully Updated LeaderBoard CS2" ;
-        console.log(result);
-      })
-      .catch(err => 
-      {
-        phase3 = "Unsucessfully Updated LeaderBoard CS2" ;
-        console.log('Save() Exception: ', err);
-      });
-  }
-  var ret =
-  {
-    Phase1 : phase1,
-    Phase2 : phase2,
-    Phase3 : phase3
+  await updateUser(CS2ScoresID,"CS2", CS2HighScore, CS2TotalCorrect, CS2TotalAttempted);
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  // Updating Total Table
+  var totalScoresID = credentials[0].Scores[0].Total[0]._id;
+  const postUpdateCredentials = await userModel.find({
+    _id: _id
+  });
+  var totalHighScore = await getTotalHighScore(postUpdateCredentials);
+  var totalTotalCorrect = await getTotalCorrect(postUpdateCredentials);
+  var totalTotalAttempted = await getTotalAttempted(postUpdateCredentials);
+  await updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted);
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  // Updating LeaderBoard Table
+  // Checking To see if record Exist
+  await updateLeaderboard(leaderboardModelCS2, postUpdateCredentials, _id, CS2HighScore, CS2TotalCorrect, CS2TotalAttempted);
+  await updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, totalHighScore, totalTotalCorrect, totalTotalAttempted);
+  var ret = {
+    Phase1: phase1,
+    Phase2: phase2,
+    Phase3: phase3,
+    Error: error
   }
   res.status(200).json(ret);
 });
@@ -495,27 +434,50 @@ app.get('/api/getIntroHighScores', async (req, res, next) => {
   const {
     numberOfSpots
   } = req.body;
-  var leaderBoard = await leaderboardModelIntro.find().sort({'HighScore' : -1}).limit(numberOfSpots).then(reviews => {res.status(200).json(reviews)});
+  var leaderBoard = await leaderboardModelIntro.find().sort({
+    'HighScore': -1
+  }).limit(numberOfSpots).then(reviews => {
+    res.status(200).json(reviews)
+  });
 });
 app.get('/api/getCS1HighScores', async (req, res, next) => {
-  console.log('We are currently in the Get Intro HighScores API');
+  console.log('We are currently in the Get CS1 HighScores API');
   console.log(req.body);
   const {
     numberOfSpots
   } = req.body;
-  var leaderBoard = await leaderboardModelCS1.find().sort({'HighScore' : -1}).limit(numberOfSpots).then(reviews => {res.status(200).json(reviews)});
+  var leaderBoard = await leaderboardModelCS1.find().sort({
+    'HighScore': -1
+  }).limit(numberOfSpots).then(reviews => {
+    res.status(200).json(reviews)
+  });
 });
 app.get('/api/getCS2HighScores', async (req, res, next) => {
-  console.log('We are currently in the Get Intro HighScores API');
+  console.log('We are currently in the Get CS2 HighScores API');
   console.log(req.body);
   const {
     numberOfSpots
   } = req.body;
-  var leaderBoard = await leaderboardModelCS2.find().sort({'HighScore' : -1}).limit(numberOfSpots).then(reviews => {res.status(200).json(reviews)});
+  var leaderBoard = await leaderboardModelCS2.find().sort({
+    'HighScore': -1
+  }).limit(numberOfSpots).then(reviews => {
+    res.status(200).json(reviews)
+  });
+});
+app.get('/api/getTotalHighScores', async (req, res, next) => {
+  console.log('We are currently in the Get Total HighScores API');
+  console.log(req.body);
+  const {
+    numberOfSpots
+  } = req.body;
+  var leaderBoard = await leaderboardModelTotal.find().sort({
+    'HighScore': -1
+  }).limit(numberOfSpots).then(reviews => {
+    res.status(200).json(reviews)
+  });
 });
 //Fucntions to Support the API End Points
-async function getTotalHighScore (credentials)
-{
+async function getTotalHighScore(credentials) {
   // Intro Scores
   var introHighScore = credentials[0].Scores[0].Intro[0].HighScore;
   // CS1 Scores
@@ -526,8 +488,7 @@ async function getTotalHighScore (credentials)
 
   return introHighScore + CS1HighScore + CS2HighScore
 }
-async function getTotalCorrect (credentials)
-{
+async function getTotalCorrect(credentials) {
   // Intro Scores
   var introTotalCorrect = credentials[0].Scores[0].Intro[0].TotalCorrect;
 
@@ -539,8 +500,7 @@ async function getTotalCorrect (credentials)
 
   return introTotalCorrect + CS1TotalCorrect + CS2TotalCorrect
 }
-async function getTotalAttempted (credentials)
-{
+async function getTotalAttempted(credentials) {
   // Intro Scores
   var introTotalAttempted = credentials[0].Scores[0].Intro[0].TotalAttempted;
 
@@ -552,54 +512,51 @@ async function getTotalAttempted (credentials)
 
   return introTotalAttempted + CS1TotalAttempted + CS2TotalAttempted
 }
-async function updateUser (scoreID, highScore, totalCorrect, totalAttempted)
-{
+async function updateUser(scoreID, category, highScore, totalCorrect, totalAttempted) {
   await userModel.findOneAndUpdate({
-    "Scores.Intro._id": scoreID
-  }, {
-    "$set": {
-      "Scores.0.Intro.$.HighScore": highScore,
-      "Scores.0.Intro.$.TotalCorrect": totalCorrect,
-      "Scores.0.Intro.$.TotalAttempted": totalAttempted
+      [`Scores.${category}._id`]: scoreID
+    }, {
+      "$set": {
+        [`Scores.0.${category}.$.HighScore`]: highScore,
+        [`Scores.0.${category}.$.TotalCorrect`]: totalCorrect,
+        [`Scores.0.${category}.$.TotalAttempted`]: totalAttempted
+      }
+    },
+    function (err) {
+      if (err) {
+        console.log(err);
+        error = err;
+        phase1 = 'Failure';
+      } else {
+        phase1 = 'Success';
+      }
     }
-  },
-  function (err) {
-    if (err) {
-      console.log(err);
-      error = err;
-      phase1 = 'Failure';
-    } else {
-      phase1 = 'Success';
-    }
-  }
-);
+  );
 }
-async function updateTotal (totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted)
-{
+async function updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted) {
   await userModel.findOneAndUpdate({
-    "Scores.Total._id": totalScoresID
-  }, {
-    "$set": {
-      "Scores.0.Total.$.HighScore": totalHighScore,
-      "Scores.0.Total.$.TotalCorrect": totalTotalCorrect,
-      "Scores.0.Total.$.TotalAttempted": totalTotalAttempted
+      "Scores.Total._id": totalScoresID
+    }, {
+      "$set": {
+        "Scores.0.Total.$.HighScore": totalHighScore,
+        "Scores.0.Total.$.TotalCorrect": totalTotalCorrect,
+        "Scores.0.Total.$.TotalAttempted": totalTotalAttempted
+      }
+    },
+    function (err, result) {
+      if (err) {
+        console.log(err);
+        error = err;
+        phase2 = 'Failure';;
+      } else {
+        phase2 = 'Success';
+      }
     }
-  },
-  function (err, result) {
-    if (err) {
-      console.log(err);
-      error = err;
-      phase2 = 'Failure';;
-    } else {
-      phase2 = 'Success';
-    }
-  }
-);
+  );
 }
-async function updateLeaderboard (model, credentials, _id, totalHighScore, totalCorrect, totalAttempted)
-{
+async function updateLeaderboard(model, credentials, _id, totalHighScore, totalCorrect, totalAttempted) {
   if (await model.exists({
-    // Fix this 
+      // Fix this 
       UserID: _id
     })) {
     await model.findOneAndUpdate({
@@ -645,8 +602,10 @@ async function updateLeaderboard (model, credentials, _id, totalHighScore, total
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Add API end points here that call external functions 
-app.get('/', function(request, response) { response.send('Hello World!') });
+app.get('/', function (request, response) {
+  response.send('Hello World!')
+});
 
-app.listen(PORT, function() { 
+app.listen(PORT, function () {
   console.log(`Server listening on port ${PORT}.`);
 });
