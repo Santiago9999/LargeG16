@@ -480,14 +480,14 @@ function getScores (credentials, category,score)
 }
 async function getTotalScores (postUpdateCredentials)
 {
-  var totalHighScore = await getTotalHighScore(postUpdateCredentials);
-  var totalCorrect = await getTotalCorrect(postUpdateCredentials);
-  var totalAttempted = await getTotalAttempted(postUpdateCredentials);
+  var totalHighScore = getTotalHighScore(postUpdateCredentials);
+  var totalCorrect =  getTotalCorrect(postUpdateCredentials);
+  var totalAttempted = getTotalAttempted(postUpdateCredentials);
   var totalID = postUpdateCredentials[0].Scores[0].Total[0]._id;
   var val = [totalID,totalHighScore,totalCorrect,totalAttempted];
   return val
 }
-async function getTotalHighScore(credentials) {
+function getTotalHighScore(credentials) {
   // Intro Scores
   var introHighScore = credentials[0].Scores[0].Intro[0].HighScore;
   // CS1 Scores
@@ -498,7 +498,7 @@ async function getTotalHighScore(credentials) {
 
   return introHighScore + CS1HighScore + CS2HighScore
 }
-async function getTotalCorrect(credentials) {
+function getTotalCorrect(credentials) {
   // Intro Scores
   var introTotalCorrect = credentials[0].Scores[0].Intro[0].TotalCorrect;
 
@@ -510,7 +510,7 @@ async function getTotalCorrect(credentials) {
 
   return introTotalCorrect + CS1TotalCorrect + CS2TotalCorrect
 }
-async function getTotalAttempted(credentials) {
+function getTotalAttempted(credentials) {
   // Intro Scores
   var introTotalAttempted = credentials[0].Scores[0].Intro[0].TotalAttempted;
 
