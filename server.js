@@ -2,72 +2,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-// ../models/users.model not js(possible fix)
-
-// Mongoose addtition
 const mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-//const mongoClient = require('mongodb').MongoClient;
+const util = require('./utilities/util')
+const Schema = mongoose.Schema;
 //----------------------------------------------------------------------------------------------------------
-// Schemas (making them external after)
-const ScoresSchema = new Schema({
-  HighScore: {
-    type: Number,
-    default: 0
-  },
-  TotalCorrect: {
-    type: Number,
-    default: 0
-  },
-  TotalAttempted: {
-    type: Number,
-    default: 0
-  }
-});
-
-const UserScores = new Schema({
-  Intro: [ScoresSchema],
-  CS1: [ScoresSchema],
-  CS2: [ScoresSchema],
-  Total: [ScoresSchema]
-});
-
-const UsersSchema = new Schema({
-  FirstName: {
-    type: String
-  },
-  LastName: {
-    type: String
-  },
-  Email: {
-    type: String
-  },
-  Password: {
-    type: String
-  },
-  Scores: [UserScores]
-});
-
-const leaderboardSchema = new Schema({
-  UserID: {
-    type: String
-  },
-  FirstName: {
-    type: String
-  },
-  LastName: {
-    type: String
-  },
-  HighScore: {
-    type: Number
-  },
-  TotalCorrect: {
-    type: Number
-  },
-  TotalAttempted: {
-    type: Number
-  }
-});
+// Schemas
+const userModel = require('./models/users'); 
+const leaderboardModelIntro = require('./models/leaderboardIntro'); 
+const leaderboardModelCS1 = require('./models/leaderboardCS1'); 
+const leaderboardModelCS2 = require('./models/leaderboardCS2'); 
+const leaderboardModelTotal = require('./models/leaderboardTotal'); 
 //----------------------------------------------------------------------------------------------------------
 
 const router = require('./routes/index');
@@ -103,15 +47,7 @@ mongoose.connection.once('open', function () {
 mongoose.connection.on('error', function (error) {
   console.log('Mongoose Connection Error : ' + error);
 });
-//----------------------------------------------------------------------------------------------------------
-// Initializing Models
-const userModel = mongoose.model("user", UsersSchema);
-const leaderboardModelIntro = mongoose.model("leaderboardIntro", leaderboardSchema);
-const leaderboardModelCS1 = mongoose.model("leaderboardCS1", leaderboardSchema);
-const leaderboardModelCS2 = mongoose.model("leaderboardCS2", leaderboardSchema);
-const leaderboardModelTotal = mongoose.model("leaderboardTotal", leaderboardSchema);
-
-//----------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 const numberOfQuestionsPerSession = 20;
 var id = '';
 var firstName = '';
@@ -120,32 +56,7 @@ var phase1 = '';
 var phase2 = '';
 var phase3 = '';
 var error = '';
-class values  {
-  constructor(id, high, totalC, totalA) {
-    this.id = id;
-    this.high = high;
-    this.totalC = totalC;
-    this.totalA = totalA;
-  }
-  getID()
-  {
-    return this.id;
-  }
-  getHigh()
-  {
-    return this.high;
-  }
-  getTotalC()
-  {
-    return this.totalC;
-  }
-  getTotalA()
-  {
-    return this.totalA;
-  }
-}
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 app.post('/api/login', async (req, res, next) => {
   console.log('We are currently in the login API');
   console.log(req.body);
@@ -167,7 +78,6 @@ app.post('/api/login', async (req, res, next) => {
   });
   // No errors on using the find function
   console.log(credentials);
-
   if (credentials.length > 0) {
     id = credentials[0]._id;
     console.log('ID: ' + id);
@@ -308,20 +218,20 @@ app.post('/api/updateIntro', async (req, res, next) => {
     }
   });
   // Getting Previous Values
-  var val = getScores(credentials, 'Intro',score);
-  await updateUser(val[0],'Intro', parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  var val = util.getScores(credentials,'Intro',score);
+  await util.updateUser(val[0],'Intro', parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating Total Table
   const postUpdateCredentials = await userModel.find({
     _id: _id
   });
-  var val2 = getTotalScores(postUpdateCredentials);
-  await updateTotal(val2[0], parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
+  var val2 = util.getTotalScores(postUpdateCredentials);
+  await util.updateTotal(val2[0], parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
   // Checking To see if record Exist
-  await updateLeaderboard(leaderboardModelIntro, postUpdateCredentials, _id, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
-  await updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, totalHighScore, totalTotalCorrect, totalTotalAttempted);
+  await util.updateLeaderboard(leaderboardModelIntro, postUpdateCredentials, _id, 'Intro', firstName, lastName, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  await util.updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, 'Total',firstName, lastName, parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   var ret = {
     Phase1: phase1,
     Phase2: phase2,
@@ -349,21 +259,20 @@ app.post('/api/updateCS1', async (req, res, next) => {
     }
   });
   // Getting Previous Values
-  var val = getScores(credentials, 'CS1',score);
-  await updateUser(val[0],"CS1", parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
-  //await updateUser(CS1ScoresID,"CS1", CS1HighScore, CS1TotalCorrect, CS1TotalAttempted);
+  var val = util.getScores(credentials, 'CS1',score);
+  await util.updateUser(val[0],"CS1", parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating Total Table
   const postUpdateCredentials = await userModel.find({
     _id: _id
   });
-  var val2 = getTotalScores(postUpdateCredentials);
+  var val2 = util.getTotalScores(postUpdateCredentials);
   await updateTotal(val2[0], parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
   // Checking To see if record Exist
-  await updateLeaderboard(leaderboardModelCS1, postUpdateCredentials, _id, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
-  await updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, parseInt(val2[0]), parseInt(val2[1]), parseInt(val2[2]));
+  await util.updateLeaderboard(leaderboardModelIntro, postUpdateCredentials, _id, 'CS1', firstName, lastName, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  await util.updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, 'Total',firstName, lastName, parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   var ret = {
     Phase1: phase1,
     Phase2: phase2,
@@ -391,20 +300,20 @@ app.post('/api/updateCS2', async (req, res, next) => {
     }
   });
   // Getting Previous Values
-  var val = getScores(credentials, 'CS2',score);
-  await updateUser(val[0],'CS2', parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  var val = util.getScores(credentials, 'CS2',score);
+  await util.updateUser(val[0],'CS2', parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating Total Table
   const postUpdateCredentials = await userModel.find({
     _id: _id
   });
-  var val2 = getTotalScores(postUpdateCredentials);
+  var val2 = util.getTotalScores(postUpdateCredentials);
   await updateTotal(val2[0], parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
   // Checking To see if record Exist
-  await updateLeaderboard(leaderboardModelCS2, postUpdateCredentials, _id, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
-  await updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, parseInt(val2[0]), parseInt(val2[1]), parseInt(val2[2]));
+  await util.updateLeaderboard(leaderboardModelIntro, postUpdateCredentials, _id, 'CS2', firstName, lastName, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  await util.updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, 'Total',firstName, lastName, parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   var ret = {
     Phase1: phase1,
     Phase2: phase2,
@@ -462,153 +371,154 @@ app.get('/api/getTotalHighScores', async (req, res, next) => {
     res.status(200).json(reviews)
   });
 });
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //Fucntions to Support the API End Points
-function getScores (credentials, category,score)
-{
-  var highScore = credentials[0].Scores[0][category][0].HighScore;
-  var totalCorrect = credentials[0].Scores[0][category][0].TotalCorrect
-  var totalAttempted = credentials[0].Scores[0][category][0].TotalAttempted;
-  var scoresID = credentials[0].Scores[0][category][0]._id;
-  if (parseInt(score) > highScore) {
-    highScore = parseInt(score);
-  }
-  totalCorrect = parseInt(totalCorrect + parseInt(score));
-  totalAttempted += numberOfQuestionsPerSession;
+// function getScores (credentials, category,score)
+// {
+//   var highScore = credentials[0].Scores[0][category][0].HighScore;
+//   var totalCorrect = credentials[0].Scores[0][category][0].TotalCorrect
+//   var totalAttempted = credentials[0].Scores[0][category][0].TotalAttempted;
+//   var scoresID = credentials[0].Scores[0][category][0]._id;
+//   if (parseInt(score) > highScore) {
+//     highScore = parseInt(score);
+//   }
+//   totalCorrect = parseInt(totalCorrect + parseInt(score));
+//   totalAttempted += numberOfQuestionsPerSession;
 
-  var val = [scoresID,highScore,totalCorrect,totalAttempted]
-  return val
-}
-function getTotalScores (postUpdateCredentials)
-{
-  var totalHighScore = getTotalHighScore(postUpdateCredentials);
-  var totalCorrect =  getTotalCorrect(postUpdateCredentials);
-  var totalAttempted = getTotalAttempted(postUpdateCredentials);
-  var totalID = postUpdateCredentials[0].Scores[0].Total[0]._id;
-  var val = [totalID,totalHighScore,totalCorrect,totalAttempted];
-  return val
-}
-function getTotalHighScore(credentials) {
-  // Intro Scores
-  var introHighScore = credentials[0].Scores[0].Intro[0].HighScore;
-  // CS1 Scores
-  var CS1HighScore = credentials[0].Scores[0].CS1[0].HighScore;
+//   var val = [scoresID,highScore,totalCorrect,totalAttempted]
+//   return val
+// }
+// function getTotalScores (postUpdateCredentials)
+// {
+//   var totalHighScore = getTotalHighScore(postUpdateCredentials);
+//   var totalCorrect =  getTotalCorrect(postUpdateCredentials);
+//   var totalAttempted = getTotalAttempted(postUpdateCredentials);
+//   var totalID = postUpdateCredentials[0].Scores[0].Total[0]._id;
+//   var val = [totalID,totalHighScore,totalCorrect,totalAttempted];
+//   return val
+// }
+// function getTotalHighScore(credentials) {
+//   // Intro Scores
+//   var introHighScore = credentials[0].Scores[0].Intro[0].HighScore;
+//   // CS1 Scores
+//   var CS1HighScore = credentials[0].Scores[0].CS1[0].HighScore;
 
-  // CS2 Scores
-  var CS2HighScore = credentials[0].Scores[0].CS2[0].HighScore;
+//   // CS2 Scores
+//   var CS2HighScore = credentials[0].Scores[0].CS2[0].HighScore;
 
-  return introHighScore + CS1HighScore + CS2HighScore
-}
-function getTotalCorrect(credentials) {
-  // Intro Scores
-  var introTotalCorrect = credentials[0].Scores[0].Intro[0].TotalCorrect;
+//   return introHighScore + CS1HighScore + CS2HighScore
+// }
+// function getTotalCorrect(credentials) {
+//   // Intro Scores
+//   var introTotalCorrect = credentials[0].Scores[0].Intro[0].TotalCorrect;
 
-  // CS1 Scores
-  var CS1TotalCorrect = credentials[0].Scores[0].CS1[0].TotalCorrect;
+//   // CS1 Scores
+//   var CS1TotalCorrect = credentials[0].Scores[0].CS1[0].TotalCorrect;
 
-  // CS2 Scores
-  var CS2TotalCorrect = credentials[0].Scores[0].CS2[0].TotalCorrect;
+//   // CS2 Scores
+//   var CS2TotalCorrect = credentials[0].Scores[0].CS2[0].TotalCorrect;
 
-  return introTotalCorrect + CS1TotalCorrect + CS2TotalCorrect
-}
-function getTotalAttempted(credentials) {
-  // Intro Scores
-  var introTotalAttempted = credentials[0].Scores[0].Intro[0].TotalAttempted;
+//   return introTotalCorrect + CS1TotalCorrect + CS2TotalCorrect
+// }
+// function getTotalAttempted(credentials) {
+//   // Intro Scores
+//   var introTotalAttempted = credentials[0].Scores[0].Intro[0].TotalAttempted;
 
-  // CS1 Scores
-  var CS1TotalAttempted = credentials[0].Scores[0].CS1[0].TotalAttempted;
+//   // CS1 Scores
+//   var CS1TotalAttempted = credentials[0].Scores[0].CS1[0].TotalAttempted;
 
-  // CS2 Scores
-  var CS2TotalAttempted = credentials[0].Scores[0].CS2[0].TotalAttempted;
+//   // CS2 Scores
+//   var CS2TotalAttempted = credentials[0].Scores[0].CS2[0].TotalAttempted;
 
-  return introTotalAttempted + CS1TotalAttempted + CS2TotalAttempted
-}
-async function updateUser(scoreID, category, highScore, totalCorrect, totalAttempted) {
-  await userModel.findOneAndUpdate({
-      [`Scores.${category}._id`]: scoreID
-    }, {
-      "$set": {
-        [`Scores.0.${category}.$.HighScore`]: highScore,
-        [`Scores.0.${category}.$.TotalCorrect`]: totalCorrect,
-        [`Scores.0.${category}.$.TotalAttempted`]: totalAttempted
-      }
-    },
-    function (err) {
-      if (err) {
-        console.log(err);
-        error = err;
-        phase1 = 'Failure';
-      } else {
-        phase1 = 'Success';
-      }
-    }
-  );
-}
-async function updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted) {
-  await userModel.findOneAndUpdate({
-      "Scores.Total._id": totalScoresID
-    }, {
-      "$set": {
-        "Scores.0.Total.$.HighScore": totalHighScore,
-        "Scores.0.Total.$.TotalCorrect": totalTotalCorrect,
-        "Scores.0.Total.$.TotalAttempted": totalTotalAttempted
-      }
-    },
-    function (err, result) {
-      if (err) {
-        console.log(err);
-        error = err;
-        phase2 = 'Failure';;
-      } else {
-        phase2 = 'Success';
-      }
-    }
-  );
-}
-async function updateLeaderboard(model, credentials, _id, totalHighScore, totalCorrect, totalAttempted) {
-  if (await model.exists({
-      // Fix this 
-      UserID: _id
-    })) {
-    await model.findOneAndUpdate({
-        "UserID": _id
-      }, {
-        "$set": {
-          "HighScore": totalHighScore,
-          "TotalCorrect": totalCorrect,
-          "TotalAttempted": totalAttempted
-        }
-      },
-      function (err) {
-        if (err) {
-          console.log(err);
-          phase3 = 'Failure';
-          error = err;
-        } else {
-          console.log("Updated LeaderBoard");
-          phase3 = 'Success';
-        }
-      }
-    );
-  } else {
-    var leaderboardInstance = new model({
-      UserID: _id,
-      FirstName: firstName,
-      LastName: lastName,
-      HighScore: credentials[0].Scores[0].Total[0].HighScore,
-      TotalCorrect: credentials[0].Scores[0].Total[0].TotalCorrect,
-      TotalAttempted: credentials[0].Scores[0].Total[0].TotalAttempted
-    })
-    await leaderboardInstance.save().then(result => {
-        console.log("Created LeaderBoard");
-        phase3 = 'Success';
-      })
-      .catch(err => {
-        console.log('Save() Exception: ', err);
-        error = err;
-        phase3 = 'Failure';
-      });
-  }
-}
+//   return introTotalAttempted + CS1TotalAttempted + CS2TotalAttempted
+// }
+// async function updateUser(scoreID, category, highScore, totalCorrect, totalAttempted) {
+//   await userModel.findOneAndUpdate({
+//       [`Scores.${category}._id`]: scoreID
+//     }, {
+//       "$set": {
+//         [`Scores.0.${category}.$.HighScore`]: highScore,
+//         [`Scores.0.${category}.$.TotalCorrect`]: totalCorrect,
+//         [`Scores.0.${category}.$.TotalAttempted`]: totalAttempted
+//       }
+//     },
+//     function (err) {
+//       if (err) {
+//         console.log(err);
+//         error = err;
+//         phase1 = 'Failure';
+//       } else {
+//         phase1 = 'Success';
+//       }
+//     }
+//   );
+// }
+// async function updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted) {
+//   await userModel.findOneAndUpdate({
+//       "Scores.Total._id": totalScoresID
+//     }, {
+//       "$set": {
+//         "Scores.0.Total.$.HighScore": totalHighScore,
+//         "Scores.0.Total.$.TotalCorrect": totalTotalCorrect,
+//         "Scores.0.Total.$.TotalAttempted": totalTotalAttempted
+//       }
+//     },
+//     function (err, result) {
+//       if (err) {
+//         console.log(err);
+//         error = err;
+//         phase2 = 'Failure';;
+//       } else {
+//         phase2 = 'Success';
+//       }
+//     }
+//   );
+// }
+// async function updateLeaderboard(model, credentials, _id, category, firstName, lastName, totalHighScore, totalCorrect, totalAttempted) {
+//   if (await model.exists({
+//       // Fix this 
+//       UserID: _id
+//     })) {
+//     await model.findOneAndUpdate({
+//         "UserID": _id
+//       }, {
+//         "$set": {
+//           "HighScore": totalHighScore,
+//           "TotalCorrect": totalCorrect,
+//           "TotalAttempted": totalAttempted
+//         }
+//       },
+//       function (err) {
+//         if (err) {
+//           console.log(err);
+//           phase3 = 'Failure';
+//           error = err;
+//         } else {
+//           console.log("Updated LeaderBoard");
+//           phase3 = 'Success';
+//         }
+//       }
+//     );
+//   } else {
+//     var leaderboardInstance = new model({
+//       UserID: _id,
+//       FirstName: firstName,
+//       LastName: lastName,
+//       HighScore: credentials[0].Scores[0][category][0].HighScore,
+//       TotalCorrect: credentials[0].Scores[0][category][0].TotalCorrect,
+//       TotalAttempted: credentials[0].Scores[0][category][0].TotalAttempted
+//     });
+//     leaderboardInstance.save().then(result => {
+//         console.log("Created LeaderBoard");
+//         phase3 = 'Success';
+//       })
+//       .catch(err => {
+//         console.log('Save() Exception: ', err);
+//         error = err;
+//         phase3 = 'Failure';
+//       });
+//   }
+// }
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Add API end points here that call external functions 
