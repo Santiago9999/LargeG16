@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const util = require('./utilities/util')
-const Schema = mongoose.Schema;
+//const Schema = mongoose.Schema;
 //----------------------------------------------------------------------------------------------------------
 // Schemas
 const userModel = require('./models/users'); 
