@@ -3,6 +3,9 @@
 const express = require ('express'); 
 const router = express.Router(); 
 const User = require('../models/users').default; 
+const UserInfo = require('./loginAndRegister');
+const updateUserData = require('./updateUserData');
+const getHighScores = require('./getScores');
 
 router.get('/Users', function(req, res) { 
   User.find(function(err, Users) {
@@ -53,6 +56,18 @@ router.delete('/Users/:id', function(req, res) {
         })
     }
   });
-})
+});
+
+
+router.route('/login').get(UserInfo.login);
+router.route('/register').post(UserInfo.register);
+router.route('/UpdateIntro').post(updateUserData.postUpdateIntro);
+router.route('/UpdateCS1').post(updateUserData.postUpdateCS1);
+router.route('/UpdateCS2').post(updateUserData.postUpdateCS2);
+router.route('/getIntroHighScores').get(getHighScores.getIntroHighScores);
+router.route('/getCS1HighScores').get(getHighScores.getCS1HighScores);
+router.route('/getCS2HighScores').get(getHighScores.getCS2HighScores);
+router.route('/getTotalHighScores').get(getHighScores.getTotalHighScores);
+
 
 module.exports = router; 
