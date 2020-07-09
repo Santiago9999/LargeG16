@@ -48,6 +48,7 @@ mongoose.connection.on('error', function (error) {
   console.log('Mongoose Connection Error : ' + error);
 });
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Get rid of all of this
 const numberOfQuestionsPerSession = 20;
 var id = '';
 var firstName = '';
@@ -271,7 +272,7 @@ app.post('/api/updateCS1', async (req, res, next) => {
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
   // Checking To see if record Exist
-  await util.updateLeaderboard(leaderboardModelIntro, postUpdateCredentials, _id, 'CS1', firstName, lastName, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  await util.updateLeaderboard(leaderboardModelCS1, postUpdateCredentials, _id, 'CS1', firstName, lastName, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   await util.updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, 'Total',firstName, lastName, parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   var ret = {
     Phase1: phase1,
@@ -312,7 +313,7 @@ app.post('/api/updateCS2', async (req, res, next) => {
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating LeaderBoard Table
   // Checking To see if record Exist
-  await util.updateLeaderboard(leaderboardModelIntro, postUpdateCredentials, _id, 'CS2', firstName, lastName, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  await util.updateLeaderboard(leaderboardModelCS2, postUpdateCredentials, _id, 'CS2', firstName, lastName, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   await util.updateLeaderboard(leaderboardModelTotal, postUpdateCredentials, _id, 'Total',firstName, lastName, parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
   var ret = {
     Phase1: phase1,
