@@ -71,6 +71,7 @@ router.route('/getCS2HighScores').get(getHighScores.getCS2HighScores);
 router.route('/getTotalHighScores').get(getHighScores.getTotalHighScores);
 router.route('/addQuestion').post(updateQuestions.postQuestions);
 router.route('/getQuestion').get(updateQuestions.getQuestions);
+router.route('/changePassword').get(UserInfo.changePassword);
 
 
 module.exports = router; 

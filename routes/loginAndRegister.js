@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 //----------------------------------------------------------------------------------------------------------
 // Schemas
 const userModel = require('../models/users');
-
+var result = '';
+var error = '';
 module.exports = {
     login: async (req, res, next) => {
         console.log('We are currently in the login API');
@@ -74,7 +75,6 @@ module.exports = {
     register: async (req, res, next) => {
         console.log('We are currently in the register API');
         console.log(req.body);
-        //response.send(req.body);
         const {
             firstName,
             lastName,
@@ -146,6 +146,52 @@ module.exports = {
         }
         // Everything is Good, we are sending back a JSON Package
         res.status(200).json(ret);
+    },
+    changePassword: async (req, res, next) => {
+        console.log('We are currently in the change password API');
+        const {
+            email,
+            password
+        } = req.body;
+        const credentials = await userModel.find({
+            Email: email
+        }, function (err) {
+            if (err) {
+                console.log(err);
+                error = err;
+            }
+        });
+        console.log(credentials[0].Password);
+        console.log(password);
+        if (credentials[0].Password== password) {
+            console.log("Password is the same as the previous password");
+            result = "Unsuccessfull";
+            error = "Password is the same as the previous password";
+        } else {
+            await userModel.findOneAndUpdate({
+                    "Email": email
+                }, {
+                    "$set": {
+                        "Password": password,
+                    }
+                },
+                function (err) {
+                    if (err) {
+                        console.log(err);
+                        console.log("Unsuccessfully Updated Total");
+                        result = "Unsuccessfull";
+                        error = err;
+                    } else {
+                        console.log("Successfully Updated Total");
+                        result = "Successfull";
+                    }
+                }
+            );
+        }
+        var ret = {
+            Result: result,
+            Error: error
+        }
+        res.status(200).json(ret);
     }
-
 }
