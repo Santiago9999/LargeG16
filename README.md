@@ -84,7 +84,7 @@ Phase4: phase4,
 ### /getIntroHighScores && /getCS1HighScores && /getCS2HighScores && /getTotalHighScores
 
 * expects
-numberOfSports,
+numberOfSpots,
 
 * returns
 [
