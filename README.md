@@ -6,7 +6,7 @@ This architecture document provides context to the how the API works.
 
 Allows the User to login and register (case sensitive):
 
-### /getLogin (get)
+### /getLogin 
 * expects
 
 firstName,
