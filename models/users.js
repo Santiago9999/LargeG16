@@ -27,19 +27,22 @@ const UserScores = new Schema({
 
 const UsersSchema = new Schema({
 	FirstName: {
-		type: String
+		type: String, required: true
 	},
 	LastName: {
-		type: String
+		type: String , required: true
 	},
 	Email: {
-		type: String
+		type: String , required: true
 	},
 	Password: {
-		type: String
+		type: String ,required: true
 	},
 	Validated: {
-		type: Number
+		type: Number ,required: true
+	},
+	Date: {
+		type : Date, default: Date.now
 	},
 	Scores: [UserScores]
 });

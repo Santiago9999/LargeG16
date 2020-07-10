@@ -5,22 +5,22 @@ const Schema = mongoose.Schema;
 // Create Schema Model 
 const questions = new Schema({
     Question: {
-      type: String
+      type: String, required: true
     },
     PossibleAnswer1: {
-      type: String
+      type: String, required: true
     },
     PossibleAnswer2: {
-      type: String
+      type: String, required: true
     },
     PossibleAnswer3: {
-      type: String
+      type: String, required: true
     },
     PossibleAnswer4: {
-      type: String
+      type: String, required: true
     },
     CorrectAnswer: {
-      type: String
+      type: String, required: true
     }
   });
   module.exports = mongoose.model('questions', questions); 

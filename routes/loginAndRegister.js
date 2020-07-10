@@ -7,7 +7,10 @@ var crypto = require("crypto");
 //----------------------------------------------------------------------------------------------------------
 // Schemas
 const userModel = require('../models/users');
-const { info } = require('console');
+const {
+    info
+} = require('console');
+const { json } = require('body-parser');
 var result = '';
 var error = '';
 var randomCode = 0;
@@ -111,7 +114,7 @@ module.exports = {
                     Result: result,
                     Error: error
                 }
-                res.status(500).json(ret).then();
+                res.status(500).json(ret);
                 return;
             }
         });
@@ -146,56 +149,53 @@ module.exports = {
                     }]
                 }]
             });
-            userInstance.save().then(result => {
+            await userInstance.save(function (err) {
+                if (err) {
+                    console.log('Failed to add user');
+                    result = 'Unsuccessfull';
                     console.log(result);
-                    error = 'Sucess';
-                    var ret = {
-                        firstName: firstName,
-                        lastName: lastName,
-                        error: error
-                    }
-                })
-                .catch(err => {
                     error = err;
-                    console.log('Save() Exception: ', err);
-                });
+                } else {
+                    result = 'Success';
+                    var transporter = nodeMailer.createTransport({
+                        service: 'gmail',
+                        secure: true,
+                        auth: {
+                            user: 'triviacreviceg16@gmail.com',
+                            pass: 'PQ4RQ6ARAbNJMTtZvZf'
+                        }
+                    });
+                    randomCode = crypto.randomBytes(4).toString('hex');
+                    var mailOPtions = {
+                        from: 'triviacreviceg16@gmail.com',
+                        to: email,
+                        subject: 'Email Verification for TrivaCrevice',
+                        text: 'Hello ' + firstName + 'Thank you for registering for TriviaCrevice \n Please Enter the Following Code to Validade you account \n This is your Code : '  + randomCode + ' \nIf you did not register for TriviaCrevice please ignore this email, Please signup now'
+                    }
+                    transporter.sendMail(mailOPtions, function (err, info) {
+                        if (err) {
+                            result = "Unsuccesfull";
+                            error = "Failed to Send Email";
+                            console.log(error);
+                        } else {
+                            console.log('Email Send: ' + info.response);
+                            result = "Succesfull";
+                        }
+                    });
+                }
+            });
         } else {
-            console.log('User Already Exist')
+            console.log('User Already Exist');
+            result = 'Unsuccessfull';
             error = 'User Name Already Exist';
         }
         var ret = {
             firstName: firstName,
             lastName: lastName,
+            result : result,
             error: error
         }
-        // Everything is Good, we are sending back a JSON Package
-
-        var transporter = nodeMailer.createTransport({
-            service: 'gmail',
-            secure : true,
-            auth: {
-                user: 'triviacreviceg16@gmail.com',
-                pass: 'PQ4RQ6ARAbNJMTtZvZf'
-            }
-        });
-        randomCode = crypto.randomBytes(4).toString('hex');
-        var mailOPtions = {
-            from: 'triviacreviceg16@gmail.com',
-            to: email,
-            subject: 'Email Verification for TrivaCrevice',
-            text: `This is your Code :` + randomCode
-        }
-        transporter.sendMail(mailOPtions, function(err,info)
-        {
-            if (err) 
-            {
-                console.log(err);
-            }
-            else
-            {
-                console.log('Email Send: ' + info.response);
-            }
-        });
+        console.log('SUP');
         res.status(200).json(ret);
     },
     changePassword: async (req, res, next) => {
@@ -284,4 +284,5 @@ module.exports = {
         res.status(200).json(ret);
         return;
     }
+    // Do Delete
 }
