@@ -23,8 +23,49 @@ Intro [HighScore, TotalCorrect, TotalAttempted],
 CS1 [HighScore, TotalCorrect, TotalAttempted],,
 CS2 [HighScore, TotalCorrect, TotalAttempted],
 Total [HighScore, TotalCorrect, TotalAttempted],
-erro 
+error
 
+### /register
+
+* expects
+
+firstName,
+lastName,
+email,
+password
+
+* returns
+
+firstName,
+lastName,
+result,
+error
+
+### /changePassword
+
+* expects
+
+email,
+password
+
+* returns
+
+result,
+error
+
+### /validadeUser
+
+* expects
+
+email,
+code
+
+* returns
+
+result,
+error
+
+## updateUserData
 
 ### Discovery Server Routes
 
