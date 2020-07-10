@@ -105,18 +105,6 @@ module.exports = {
         const credentials = await userModel.find({
             Email: email,
             Password: password
-        }, function (err) {
-            if (err) {
-                result = "Unsuccessfull";
-                console.log(err);
-                error = err;
-                var ret = {
-                    Result: result,
-                    Error: error
-                }
-                res.status(500).json(ret);
-                return;
-            }
         });
         if (credentials.length == 0) {
             console.log('No records Found');
