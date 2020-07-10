@@ -172,6 +172,7 @@ module.exports = {
 
         var transporter = nodeMailer.createTransport({
             service: 'gmail',
+            secure : true,
             auth: {
                 user: 'triviacreviceg16@gmail.com',
                 pass: 'PQ4RQ6ARAbNJMTtZvZf'
@@ -270,7 +271,7 @@ module.exports = {
                         result = "Unsuccessfull";
                         error = err;
                     } else {
-                        console.log("Successfully Validadedl");
+                        console.log("Successfully Validaded");
                         result = "Successfull";
                     }
                 }

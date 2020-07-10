@@ -72,7 +72,7 @@ router.route('/getTotalHighScores').get(getHighScores.getTotalHighScores);
 router.route('/addQuestion').post(updateQuestions.postQuestions);
 router.route('/getQuestion').get(updateQuestions.getQuestions);
 router.route('/changePassword').get(UserInfo.changePassword);
-router.route('/validateUser').get(UserInfo.validateUser);
+router.route('/validateUser').post(UserInfo.validateUser);
 
 
 module.exports = router; 
