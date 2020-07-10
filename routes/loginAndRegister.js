@@ -10,7 +10,9 @@ const userModel = require('../models/users');
 const {
     info
 } = require('console');
-const { json } = require('body-parser');
+const {
+    json
+} = require('body-parser');
 var result = '';
 var error = '';
 var randomCode = 0;
@@ -158,7 +160,7 @@ module.exports = {
                         from: 'triviacreviceg16@gmail.com',
                         to: email,
                         subject: 'Email Verification for TrivaCrevice',
-                        text: 'Hello ' + firstName + 'Thank you for registering for TriviaCrevice \n Please Enter the Following Code to Validade you account \n This is your Code : '  + randomCode + ' \nIf you did not register for TriviaCrevice please ignore this email, Please signup now'
+                        text: 'Hello ' + firstName + 'Thank you for registering for TriviaCrevice \n Please Enter the Following Code to Validade you account \n This is your Code : ' + randomCode + ' \nIf you did not register for TriviaCrevice please ignore this email, Please signup now'
                     }
                     transporter.sendMail(mailOPtions, function (err, info) {
                         if (err) {
@@ -177,14 +179,29 @@ module.exports = {
             result = 'Unsuccessfull';
             error = 'User Name Already Exist';
         }
-        var ret = {
-            firstName: firstName,
-            lastName: lastName,
-            result : result,
-            error: error
+        if (await userModel.exists({
+                // Fix this 
+                Email: email
+            })) {
+            var ret = {
+                firstName: firstName,
+                lastName: lastName,
+                result: result,
+                error: error
+            }
+            console.log('Successfull Test');
+            res.status(200).json(ret);
+        } else {
+            result = 'Unsuccessfull';
+            var ret = {
+                firstName: firstName,
+                lastName: lastName,
+                result: result,
+                error: error
+            }
+            console.log('Unsuccessfull Test');
+            res.status(200).json(ret);
         }
-        console.log('SUP');
-        res.status(200).json(ret);
     },
     changePassword: async (req, res, next) => {
         console.log('We are currently in the change password API');
