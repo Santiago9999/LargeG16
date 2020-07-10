@@ -6,7 +6,7 @@ This architecture document provides context to the how the API works.
 
 Allows the User to login and register (case sensitive):
 
-### /login
+### /login (get)
 * expects
 
 firstName,
@@ -25,7 +25,7 @@ CS2 [HighScore, TotalCorrect, TotalAttempted],
 Total [HighScore, TotalCorrect, TotalAttempted],
 error
 
-### /register
+### /register (post)
 
 * expects
 
@@ -41,7 +41,7 @@ lastName,
 result,
 error
 
-### /changePassword
+### /changePassword (post)
 
 * expects
 
@@ -53,7 +53,7 @@ password
 result,
 error
 
-### /validateUser
+### /validateUser (post)
 
 * expects
 
