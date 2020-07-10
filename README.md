@@ -69,7 +69,7 @@ error
 ### /postUpdateIntro && /postUpdateCS1 && /postUpdateCS2
 
 * expects
-ID,
+_id,
 firstName,
 lastName,
 score,
