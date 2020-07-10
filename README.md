@@ -6,7 +6,7 @@ This architecture document provides context to the how the API works.
 
 Allows the User to login and register (case sensitive):
 
-### /login (get)
+### /getLogin (get)
 * expects
 
 firstName,
@@ -25,7 +25,7 @@ CS2 [HighScore, TotalCorrect, TotalAttempted],
 Total [HighScore, TotalCorrect, TotalAttempted],
 error
 
-### /register (post)
+### /postRegister
 
 * expects
 
@@ -41,7 +41,7 @@ lastName,
 result,
 error
 
-### /changePassword (post)
+### /postChangePassword
 
 * expects
 
@@ -53,7 +53,7 @@ password
 result,
 error
 
-### /validateUser (post)
+### /postvalidateUser
 
 * expects
 
@@ -81,7 +81,7 @@ Phase3: phase3,
 Phase4: phase4,
 
 ## getScores
-### /getIntroHighScores && /getCS1HighScores && /getCS2HighScores
+### /getIntroHighScores && /getCS1HighScores && /getCS2HighScores && /getTotalHighScores
 
 * expects
 numberOfSports,
@@ -110,68 +110,40 @@ numberOfSports,
     }
 ]
 
-### Discovery Server Routes
+## questions
+### /addQuestion
 
-A UDP server that implements the SSDP protocol to allow for discovery of devices by Alexa, as such it is largely reactive and only is responsible for outputting the list of devices available as XML.
+* expects
+question,
+possibleAnswer1,
+possibleAnswer2,
+possibleAnswer3,
+possibleAnswer4,
+category,
 
-## Device Server
+* returns
+result : results,
+error : error
 
-The primary interface for interaction between Alexa and the device. This server is also conforming to the WeMo switch protocol giving us the same limitations described above.
+### /getQuestion
+* expects
+question,
+possibleAnswer1,
+possibleAnswer2,
+possibleAnswer3,
+possibleAnswer4,
+category,
 
-### Device Server Routes
-
-An express server that is dedicated to a single device, because we are restricted to mapping a single device to a single port.
-
-#### getDeviceSetup
-
-Returns the device's unique setup XML that tells Alexa what the device supports, because we are emulating WeMo we conform to its abilities.
-
-#### deviceControl
-
-This is how we are able to control a device, the server either gets the latest status of the device or changes the state of the device (on/off).
-
-## Client Server
-
-This server is meant to be an interface for the client to be able to administrate and access their devices.
-
-### Client Server Routes
-
-Used to administrate and access user devices.
-
-#### listDevices (`GET /devices`)
-
-List all devices the user has configured
-
-#### addDevice (`PUT /devices`)
-
-Add a new device
-
-#### getDevice (`GET /devices/:id`)
-
-Retrieve a single device, its state and meta data
-
-#### updateDevice (`POST /devices/:id`)
-
-Update a single device's meta data
-
-#### deleteDevice (`DELETE /devices/:id`)
-
-Delete a single device
-
-#### getState (`GET /devices/:id/state`)
-
-Get the state of a device (on/off)
-
-#### setState (`POST /devices/:id/state`)
-
-Set the state of a device (on/off)
-
-## Device
-
-Schema for a single device resource
-
-* **Name (String):** The name of the device
-* **Port (Number):** The port of the device server
-* **getStatus (AsyncFunction):** Allows for getting the status of the device (`true` if on, `false` if off)
-* **setOn (AsyncFunction):** Changes the device to on
-* **setOff (AsyncFunction):** Changes the device to off
+* returns
+[
+    {
+        "_id": "5f08cb12faad4bd89dba002b",
+        "Question": "What is the range of numbers that can be stored in the 'int' data type?",
+        "PossibleAnswer1": "-2^31 to 2^31-1",
+        "PossibleAnswer2": "-2^31 to 2^31-1",
+        "PossibleAnswer3": "-2^7 to 2^7-1",
+        "PossibleAnswer4": "-2^63 to 2^63-1",
+        "Category": "Intro",
+        "__v": 0
+    }
+]
