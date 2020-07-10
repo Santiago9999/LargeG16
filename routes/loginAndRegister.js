@@ -250,8 +250,8 @@ module.exports = {
             );
         }
         var ret = {
-            Result: result,
-            Error: error
+            result: result,
+            error: error
         }
         res.status(200).json(ret);
     },
@@ -283,8 +283,8 @@ module.exports = {
             );
         }
         var ret = {
-            Result: result,
-            Error: error
+            result: result,
+            error: error
         }
         res.status(200).json(ret);
         return;

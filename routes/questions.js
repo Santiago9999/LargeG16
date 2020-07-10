@@ -18,15 +18,13 @@ module.exports = {
             possibleAnswer2,
             possibleAnswer3,
             possibleAnswer4,
-            correctAnswer,
+            category,
         } = req.body;
+        console.log(category);
         // check for duplicate questions
-        if (await questionModel.exists({
-                Question: question
-            })) {
+        if (await questionModel.exists({Question: question})){
             results = "Unsuccessfull";
             error = "Question Already Exist";
-
         } else {
             var questionInstance = new questionModel({
                 Question: question,
@@ -34,7 +32,7 @@ module.exports = {
                 PossibleAnswer2: possibleAnswer2,
                 PossibleAnswer3: possibleAnswer3,
                 PossibleAnswer4: possibleAnswer4,
-                CorrectAnswer: correctAnswer,
+                Category: category,
             });
             await questionInstance.save().then(result => {
                     console.log("Answer Created");
@@ -48,16 +46,17 @@ module.exports = {
         // add question to databse
         var phase1 = "Success";
         var ret = {
-            Result : results,
-            Error : error
+            result : results,
+            error : error
         }
         res.status(200).json(ret);
     },
     getQuestions: async (req, res, next) => {
         console.log('We are currently in the Get Questions API');
-        var leaderBoard = await questionModel.find().sort({
-            'HighScore': -1
-        }).limit(20).then(reviews => {
+        const {
+            category,
+        } = req.body;
+        var leaderBoard = await questionModel.find({ Category: category}).limit(20).then(reviews => {
             res.status(200).json(reviews);
         });
     }

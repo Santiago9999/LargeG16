@@ -14,12 +14,12 @@ const questions = new Schema({
       type: String, required: true
     },
     PossibleAnswer3: {
-      type: String, required: true
+      type: String, 
     },
     PossibleAnswer4: {
-      type: String, required: true
+      type: String, 
     },
-    CorrectAnswer: {
+    Category: {
       type: String, required: true
     }
   });
