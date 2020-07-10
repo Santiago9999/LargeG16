@@ -2,11 +2,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const nodeMailer = require('nodemailer');
+var crypto = require("crypto");
 //----------------------------------------------------------------------------------------------------------
 // Schemas
 const userModel = require('../models/users');
+const { info } = require('console');
 var result = '';
 var error = '';
+var randomCode = 0;
 module.exports = {
     login: async (req, res, next) => {
         console.log('We are currently in the login API');
@@ -35,49 +39,54 @@ module.exports = {
             return
         });
         // No errors on using the find function
-        console.log(credentials);
-        if (credentials.length > 0) {
-            var id = credentials[0]._id;
-            console.log('ID: ' + id);
+        if (credentials[0].Validated == 1) {
+            if (credentials.length > 0) {
+                var id = credentials[0]._id;
+                console.log('ID: ' + id);
 
-            var firstName = credentials[0].FirstName;
-            console.log('First Name: ' + firstName);
+                var firstName = credentials[0].FirstName;
+                console.log('First Name: ' + firstName);
 
-            var lastName = credentials[0].LastName;
-            console.log('Last Name: ' + lastName);
+                var lastName = credentials[0].LastName;
+                console.log('Last Name: ' + lastName);
 
-            var introScore = credentials[0].Scores[0].Intro[0];
-            console.log('Intro Array: ' + introScore);
+                var introScore = credentials[0].Scores[0].Intro[0];
+                console.log('Intro Array: ' + introScore);
 
-            var CS1Score = credentials[0].Scores[0].CS1[0];
-            console.log('CS1 Array: ' + CS1Score);
+                var CS1Score = credentials[0].Scores[0].CS1[0];
+                console.log('CS1 Array: ' + CS1Score);
 
-            var CS2Score = credentials[0].Scores[0].CS2[0];
-            console.log('CS1 Array:  ' + CS2Score);
+                var CS2Score = credentials[0].Scores[0].CS2[0];
+                console.log('CS1 Array:  ' + CS2Score);
 
-            var totalScore = credentials[0].Scores[0].Total[0];
-            console.log('Total Array:  ' + totalScore);
+                var totalScore = credentials[0].Scores[0].Total[0];
+                console.log('Total Array:  ' + totalScore);
 
-            error = 'Sucess';
+                error = 'Sucess';
+            } else {
+                console.log('No records found');
+                error = 'No Records found';
+            }
+
+            // Creating JSON Package to Send back 
+            var ret = {
+                ID: id,
+                firstName: firstName,
+                lastName: lastName,
+                intro: introScore,
+                CS1: CS1Score,
+                CS2: CS2Score,
+                Total: totalScore,
+                error: error
+            }
+
+            // Everything is Good, we are sending back a JSON Package
+            res.status(200).json(ret);
         } else {
-            console.log('No records found');
-            error = 'No Records found';
+            console.log("Account not validated")
+            result = "Unsuccessfull";
+            error = "Account not validated"
         }
-
-        // Creating JSON Package to Send back 
-        var ret = {
-            ID: id,
-            firstName: firstName,
-            lastName: lastName,
-            intro: introScore,
-            CS1: CS1Score,
-            CS2: CS2Score,
-            Total: totalScore,
-            error: error
-        }
-
-        // Everything is Good, we are sending back a JSON Package
-        res.status(200).json(ret);
     },
     register: async (req, res, next) => {
         console.log('We are currently in the register API');
@@ -160,7 +169,33 @@ module.exports = {
             error: error
         }
         // Everything is Good, we are sending back a JSON Package
-        res.status(200).json(ret);
+
+        var transporter = nodeMailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'triviacreviceg16@gmail.com',
+                pass: 'PQ4RQ6ARAbNJMTtZvZf'
+            }
+        });
+        randomCode = crypto.randomBytes(4).toString('hex');
+        var mailOPtions = {
+            from: 'triviacreviceg16@gmail.com',
+            to: email,
+            subject: 'Email Verification for TrivaCrevice',
+            text: `This is your Code :` + randomCode
+        }
+        transporter.sendMail(mailOPtions, function(err,info)
+        {
+            if (err) 
+            {
+                console.log(err);
+            }
+            else
+            {
+                console.log('Email Send: ' + info.response);
+            }
+        });
+        //res.status(200).json(ret);
     },
     changePassword: async (req, res, next) => {
         console.log('We are currently in the change password API');
@@ -203,6 +238,39 @@ module.exports = {
                         error = err;
                     } else {
                         console.log("Successfully Updated Total");
+                        result = "Successfull";
+                    }
+                }
+            );
+        }
+        var ret = {
+            Result: result,
+            Error: error
+        }
+        res.status(200).json(ret);
+    },
+    validateUser: async (req, res, next) => {
+        console.log('We are currently in the Validate API');
+        const {
+            email,
+            code
+        } = req.body;
+        if (randomCode = code) {
+            await userModel.findOneAndUpdate({
+                    "Email": email
+                }, {
+                    "$set": {
+                        "Validated": 1,
+                    }
+                },
+                function (err) {
+                    if (err) {
+                        console.log(err);
+                        console.log("Unsuccessfully Validaded");
+                        result = "Unsuccessfull";
+                        error = err;
+                    } else {
+                        console.log("Successfully Validadedl");
                         result = "Successfull";
                     }
                 }
