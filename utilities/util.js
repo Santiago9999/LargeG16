@@ -1,6 +1,7 @@
 const numberOfQuestionsPerSession = 20;
 const userModel = require('../models/users');
 var error = '';
+var result ='';
 
 function getScores(credentials, category, score) {
   var highScore = credentials[0].Scores[0][category][0].HighScore;
@@ -113,7 +114,7 @@ async function updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, tot
           Error: error
         }
         res.status(500).json(ret);
-        return
+        return;
       } else {
         console.log("Successfully Updated Total");
       }
@@ -171,7 +172,7 @@ async function updateLeaderboard(model, credentials, _id, category, firstName, l
   }
   return error
 }
-async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, category, res) {
+async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, category, res){
   console.log('We are currently in the Update' + category + ' API');
   console.log(req.body);
   const {
@@ -187,14 +188,24 @@ async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, cate
       result = "Unsuccessfull";
       console.log(err);
       error = err;
+      var ret = {
+        Result: result,
+        Error: error
+      }
+      res.status(500).json(ret);
+      return;
     }
+  });
+  if (credentials.length == 0)
+  {
+    error = "No Users Found";
     var ret = {
       Result: result,
       Error: error
     }
     res.status(500).json(ret);
-    return
-  });
+    return;
+  }
   // Getting Previous Values
   var val = getScores(credentials, category, score);
   var phase1 = await updateUser(val[0], category, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
@@ -223,6 +234,7 @@ async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, cate
     Phase4: phase4,
   }
   res.status(200).json(ret);
+  return;
 }
 
 module.exports = {

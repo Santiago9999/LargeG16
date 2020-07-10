@@ -107,13 +107,13 @@ module.exports = {
                 result = "Unsuccessfull";
                 console.log(err);
                 error = err;
+                var ret = {
+                    Result: result,
+                    Error: error
+                }
+                res.status(500).json(ret).then();
+                return;
             }
-            var ret = {
-                Result: result,
-                Error: error
-            }
-            res.status(500).json(ret);
-            return
         });
         if (credentials.length == 0) {
             console.log('No records Found');
@@ -196,7 +196,7 @@ module.exports = {
                 console.log('Email Send: ' + info.response);
             }
         });
-        //res.status(200).json(ret);
+        res.status(200).json(ret);
     },
     changePassword: async (req, res, next) => {
         console.log('We are currently in the change password API');
@@ -282,5 +282,6 @@ module.exports = {
             Error: error
         }
         res.status(200).json(ret);
+        return;
     }
 }
