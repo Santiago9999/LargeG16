@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -6,40 +5,42 @@ const Schema = mongoose.Schema;
 
 const ScoresSchema = new Schema({
 	HighScore: {
-	  type: Number,
-	  default: 0
+		type: Number,
+		default: 0
 	},
 	TotalCorrect: {
-	  type: Number,
-	  default: 0
+		type: Number,
+		default: 0
 	},
 	TotalAttempted: {
-	  type: Number,
-	  default: 0
+		type: Number,
+		default: 0
 	}
-  });
-  
-  const UserScores = new Schema({
+});
+
+const UserScores = new Schema({
 	Intro: [ScoresSchema],
 	CS1: [ScoresSchema],
 	CS2: [ScoresSchema],
 	Total: [ScoresSchema]
-  });
-  
-  const UsersSchema = new Schema({
+});
+
+const UsersSchema = new Schema({
 	FirstName: {
-	  type: String
+		type: String
 	},
 	LastName: {
-	  type: String
+		type: String
 	},
 	Email: {
-	  type: String
+		type: String
 	},
 	Password: {
-	  type: String
+		type: String
+	},
+	Validated: {
+		type: Number
 	},
 	Scores: [UserScores]
-  });
-module.exports = mongoose.model('users', UsersSchema); 
-
+});
+module.exports = mongoose.model('users', UsersSchema);

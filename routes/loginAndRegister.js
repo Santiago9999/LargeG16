@@ -113,6 +113,7 @@ module.exports = {
                 LastName: lastName,
                 Email: email,
                 Password: password,
+                Validated: 0,
                 Scores: [{
                     Intro: [{
                         HighScore: 0,
