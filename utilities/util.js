@@ -1,6 +1,6 @@
 const numberOfQuestionsPerSession = 20;
 const userModel = require('../models/users'); 
-
+var error = '';
 function getScores (credentials, category,score)
 {
   var highScore = credentials[0].Scores[0][category][0].HighScore;
@@ -74,12 +74,13 @@ async function updateUser(scoreID, category, highScore, totalCorrect, totalAttem
       if (err) {
         console.log(err);
         error = err;
-        phase1 = 'Failure';
+        console.log("Unsuccessfully Updated User " + category);
       } else {
-        phase1 = 'Success';
+        console.log("Successfully Updated User " + category);
       }
     }
   );
+  return error
 }
 async function updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, totalTotalAttempted) {
   await userModel.findOneAndUpdate({
@@ -91,16 +92,17 @@ async function updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, tot
         "Scores.0.Total.$.TotalAttempted": totalTotalAttempted
       }
     },
-    function (err, result) {
+    function (err) {
       if (err) {
         console.log(err);
+        console.log("Unsuccessfully Updated Total");
         error = err;
-        phase2 = 'Failure';;
       } else {
-        phase2 = 'Success';
+        console.log("Successfully Updated Total");
       }
     }
   );
+  return error
 }
 async function updateLeaderboard(model, credentials, _id, category, firstName, lastName, totalHighScore, totalCorrect, totalAttempted) {
   if (await model.exists({
@@ -119,11 +121,10 @@ async function updateLeaderboard(model, credentials, _id, category, firstName, l
       function (err) {
         if (err) {
           console.log(err);
-          phase3 = 'Failure';
+          console.log("Unsuccessfully Updated LeaderBoard " + category);
           error = err;
         } else {
-          console.log("Updated LeaderBoard");
-          phase3 = 'Success';
+          console.log("Successfully Updated LeaderBoard " + category);
         }
       }
     );
@@ -137,15 +138,61 @@ async function updateLeaderboard(model, credentials, _id, category, firstName, l
       TotalAttempted: credentials[0].Scores[0][category][0].TotalAttempted
     });
     leaderboardInstance.save().then(result => {
-        console.log("Created LeaderBoard");
-        phase3 = 'Success';
+        console.log("Successfully Created LeaderBoard " + category);
       })
       .catch(err => {
-        console.log('Save() Exception: ', err);
+        console.log("Unsuccessfully Updated LeaderBoard " + category);
         error = err;
-        phase3 = 'Failure';
       });
   }
+  return error
+}
+async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, category,res)
+{
+  console.log('We are currently in the Update' + category + ' API');
+  console.log(req.body);
+  const {
+    _id,
+    firstName,
+    lastName,
+    score
+  } = req.body;
+  const credentials = await primaryModel.find({
+    _id: _id
+  }, function (err) {
+    if (err) {
+      console.log(err);
+      error = err;
+    }
+  });
+  // Getting Previous Values
+  var val = getScores(credentials,category,score);
+  var phase1 = await updateUser(val[0],category, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  // Updating Total Table
+  const postUpdateCredentials = await primaryModel.find({
+    _id: _id
+  });
+  var val2 = getTotalScores(postUpdateCredentials);
+  var phase2 = await updateTotal(val2[0], parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  // Updating LeaderBoard Table
+  // Checking To see if record Exist
+  var phase3 = await updateLeaderboard(secondaryModel, postUpdateCredentials, _id, category, firstName, lastName, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  var phase4 = await updateLeaderboard(tertiaryModel, postUpdateCredentials, _id, 'Total',firstName, lastName, parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
+  
+  (phase1 == '') ? phase1 = "Successfull" : phase1 = "Unsuccessfull: " + phase1;
+  (phase2 == '') ? phase2 = "Successfull" : phase2 = "Unsuccessfull: " + phase1;
+  (phase3 == '') ? phase3 = "Successfull" : phase3 = "Unsuccessfull: " + phase1;
+  (phase4 == '') ? phase4 = "Successfull" : phase4 = "Unsuccessfull: " + phase1;
+  
+  var ret = {
+      Phase1: phase1,
+      Phase2: phase2,
+      Phase3: phase3,
+      Phase4: phase4,
+  }
+  res.status(200).json(ret);
 }
 
 module.exports = 
@@ -156,5 +203,6 @@ module.exports =
     getTotalAttempted,
     updateUser,
     updateTotal,
-    updateLeaderboard
+    updateLeaderboard,
+    postUpdate
 }

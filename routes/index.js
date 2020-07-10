@@ -6,6 +6,7 @@ const User = require('../models/users').default;
 const UserInfo = require('./loginAndRegister');
 const updateUserData = require('./updateUserData');
 const getHighScores = require('./getScores');
+const updateQuestions = require('./questions');
 
 router.get('/Users', function(req, res) { 
   User.find(function(err, Users) {
@@ -68,6 +69,8 @@ router.route('/getIntroHighScores').get(getHighScores.getIntroHighScores);
 router.route('/getCS1HighScores').get(getHighScores.getCS1HighScores);
 router.route('/getCS2HighScores').get(getHighScores.getCS2HighScores);
 router.route('/getTotalHighScores').get(getHighScores.getTotalHighScores);
+router.route('/addQuestion').post(updateQuestions.postQuestions);
+router.route('/getQuestion').get(updateQuestions.getQuestions);
 
 
 module.exports = router; 
