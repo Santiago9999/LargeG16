@@ -53,7 +53,7 @@ password
 result,
 error
 
-### /validadeUser
+### /validateUser
 
 * expects
 
