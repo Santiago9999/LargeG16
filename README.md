@@ -80,6 +80,35 @@ Phase2: phase2,
 Phase3: phase3,
 Phase4: phase4,
 
+## getScores
+### /getIntroHighScores && /getCS1HighScores && /getCS2HighScores
+
+* expects
+numberOfSports,
+
+* returns
+[
+    {
+        "_id": "5f0800b18ba7c74e07c4e6ed",
+        "UserID": "5f07fd3b9215af4a66469b7c",
+        "FirstName": "Juan",
+        "LastName": "Herrera",
+        "HighScore": 15,
+        "TotalCorrect": 60,
+        "TotalAttempted": 80,
+        "__v": 0
+    },
+    {
+        "_id": "5f08011d8ba7c74e07c4e6f4",
+        "UserID": "5f0801068ba7c74e07c4e6ee",
+        "FirstName": "Juan",
+        "LastName": "Herrera",
+        "HighScore": 15,
+        "TotalCorrect": 15,
+        "TotalAttempted": 20,
+        "__v": 0
+    }
+]
 
 ### Discovery Server Routes
 
