@@ -23,9 +23,16 @@ module.exports = {
             Password: password
         }, function (err) {
             if (err) {
+                result = "Unsuccessfull";
                 console.log(err);
                 error = err;
             }
+            var ret = {
+                Result: result,
+                Error: error
+            }
+            res.status(500).json(ret);
+            return
         });
         // No errors on using the find function
         console.log(credentials);
@@ -88,9 +95,16 @@ module.exports = {
             Password: password
         }, function (err) {
             if (err) {
+                result = "Unsuccessfull";
                 console.log(err);
                 error = err;
             }
+            var ret = {
+                Result: result,
+                Error: error
+            }
+            res.status(500).json(ret);
+            return
         });
         if (credentials.length == 0) {
             console.log('No records Found');
@@ -158,12 +172,17 @@ module.exports = {
         }, function (err) {
             if (err) {
                 console.log(err);
+                result = "Unsuccessfull";
                 error = err;
+                var ret = {
+                    Result: result,
+                    Error: error
+                }
+                res.status(500).json(ret);
+                return
             }
         });
-        console.log(credentials[0].Password);
-        console.log(password);
-        if (credentials[0].Password== password) {
+        if (credentials[0].Password == password) {
             console.log("Password is the same as the previous password");
             result = "Unsuccessfull";
             error = "Password is the same as the previous password";

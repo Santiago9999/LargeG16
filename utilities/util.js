@@ -1,8 +1,8 @@
 const numberOfQuestionsPerSession = 20;
-const userModel = require('../models/users'); 
+const userModel = require('../models/users');
 var error = '';
-function getScores (credentials, category,score)
-{
+
+function getScores(credentials, category, score) {
   var highScore = credentials[0].Scores[0][category][0].HighScore;
   var totalCorrect = credentials[0].Scores[0][category][0].TotalCorrect
   var totalAttempted = credentials[0].Scores[0][category][0].TotalAttempted;
@@ -13,18 +13,19 @@ function getScores (credentials, category,score)
   totalCorrect = parseInt(totalCorrect + parseInt(score));
   totalAttempted += numberOfQuestionsPerSession;
 
-  var val = [scoresID,highScore,totalCorrect,totalAttempted]
+  var val = [scoresID, highScore, totalCorrect, totalAttempted]
   return val
 }
-function getTotalScores (postUpdateCredentials)
-{
+
+function getTotalScores(postUpdateCredentials) {
   var totalHighScore = getTotalHighScore(postUpdateCredentials);
-  var totalCorrect =  getTotalCorrect(postUpdateCredentials);
+  var totalCorrect = getTotalCorrect(postUpdateCredentials);
   var totalAttempted = getTotalAttempted(postUpdateCredentials);
   var totalID = postUpdateCredentials[0].Scores[0].Total[0]._id;
-  var val = [totalID,totalHighScore,totalCorrect,totalAttempted];
+  var val = [totalID, totalHighScore, totalCorrect, totalAttempted];
   return val
 }
+
 function getTotalHighScore(credentials) {
   // Intro Scores
   var introHighScore = credentials[0].Scores[0].Intro[0].HighScore;
@@ -36,6 +37,7 @@ function getTotalHighScore(credentials) {
 
   return introHighScore + CS1HighScore + CS2HighScore
 }
+
 function getTotalCorrect(credentials) {
   // Intro Scores
   var introTotalCorrect = credentials[0].Scores[0].Intro[0].TotalCorrect;
@@ -48,6 +50,7 @@ function getTotalCorrect(credentials) {
 
   return introTotalCorrect + CS1TotalCorrect + CS2TotalCorrect
 }
+
 function getTotalAttempted(credentials) {
   // Intro Scores
   var introTotalAttempted = credentials[0].Scores[0].Intro[0].TotalAttempted;
@@ -75,6 +78,13 @@ async function updateUser(scoreID, category, highScore, totalCorrect, totalAttem
         console.log(err);
         error = err;
         console.log("Unsuccessfully Updated User " + category);
+        result = "Unsuccessfull";
+        var ret = {
+          Result: result,
+          Error: error
+        }
+        res.status(500).json(ret);
+        return
       } else {
         console.log("Successfully Updated User " + category);
       }
@@ -97,6 +107,13 @@ async function updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, tot
         console.log(err);
         console.log("Unsuccessfully Updated Total");
         error = err;
+        result = "Unsuccessfull";
+        var ret = {
+          Result: result,
+          Error: error
+        }
+        res.status(500).json(ret);
+        return
       } else {
         console.log("Successfully Updated Total");
       }
@@ -123,6 +140,13 @@ async function updateLeaderboard(model, credentials, _id, category, firstName, l
           console.log(err);
           console.log("Unsuccessfully Updated LeaderBoard " + category);
           error = err;
+          result = "Unsuccessfull";
+          var ret = {
+            Result: result,
+            Error: error
+          }
+          res.status(500).json(ret);
+          return
         } else {
           console.log("Successfully Updated LeaderBoard " + category);
         }
@@ -147,8 +171,7 @@ async function updateLeaderboard(model, credentials, _id, category, firstName, l
   }
   return error
 }
-async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, category,res)
-{
+async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, category, res) {
   console.log('We are currently in the Update' + category + ' API');
   console.log(req.body);
   const {
@@ -161,13 +184,20 @@ async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, cate
     _id: _id
   }, function (err) {
     if (err) {
+      result = "Unsuccessfull";
       console.log(err);
       error = err;
     }
+    var ret = {
+      Result: result,
+      Error: error
+    }
+    res.status(500).json(ret);
+    return
   });
   // Getting Previous Values
-  var val = getScores(credentials,category,score);
-  var phase1 = await updateUser(val[0],category, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
+  var val = getScores(credentials, category, score);
+  var phase1 = await updateUser(val[0], category, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating Total Table
   const postUpdateCredentials = await primaryModel.find({
@@ -179,30 +209,29 @@ async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, cate
   // Updating LeaderBoard Table
   // Checking To see if record Exist
   var phase3 = await updateLeaderboard(secondaryModel, postUpdateCredentials, _id, category, firstName, lastName, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
-  var phase4 = await updateLeaderboard(tertiaryModel, postUpdateCredentials, _id, 'Total',firstName, lastName, parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
-  
-  (phase1 == '') ? phase1 = "Successfull" : phase1 = "Unsuccessfull: " + phase1;
-  (phase2 == '') ? phase2 = "Successfull" : phase2 = "Unsuccessfull: " + phase1;
-  (phase3 == '') ? phase3 = "Successfull" : phase3 = "Unsuccessfull: " + phase1;
-  (phase4 == '') ? phase4 = "Successfull" : phase4 = "Unsuccessfull: " + phase1;
-  
+  var phase4 = await updateLeaderboard(tertiaryModel, postUpdateCredentials, _id, 'Total', firstName, lastName, parseInt(val2[1]), parseInt(val2[2]), parseInt(val2[3]));
+
+  (phase1 == '') ? phase1 = "Successfull": phase1 = "Unsuccessfull: " + phase1;
+  (phase2 == '') ? phase2 = "Successfull": phase2 = "Unsuccessfull: " + phase1;
+  (phase3 == '') ? phase3 = "Successfull": phase3 = "Unsuccessfull: " + phase1;
+  (phase4 == '') ? phase4 = "Successfull": phase4 = "Unsuccessfull: " + phase1;
+
   var ret = {
-      Phase1: phase1,
-      Phase2: phase2,
-      Phase3: phase3,
-      Phase4: phase4,
+    Phase1: phase1,
+    Phase2: phase2,
+    Phase3: phase3,
+    Phase4: phase4,
   }
   res.status(200).json(ret);
 }
 
-module.exports = 
-{
-    getScores,
-    getTotalScores,
-    getTotalCorrect,
-    getTotalAttempted,
-    updateUser,
-    updateTotal,
-    updateLeaderboard,
-    postUpdate
+module.exports = {
+  getScores,
+  getTotalScores,
+  getTotalCorrect,
+  getTotalAttempted,
+  updateUser,
+  updateTotal,
+  updateLeaderboard,
+  postUpdate
 }
