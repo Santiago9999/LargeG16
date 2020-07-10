@@ -20,7 +20,7 @@ ID,
 firstName,
 lastName,
 Intro [HighScore, TotalCorrect, TotalAttempted],
-CS1 [HighScore, TotalCorrect, TotalAttempted],,
+CS1 [HighScore, TotalCorrect, TotalAttempted],
 CS2 [HighScore, TotalCorrect, TotalAttempted],
 Total [HighScore, TotalCorrect, TotalAttempted],
 error
