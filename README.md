@@ -110,7 +110,7 @@ numberOfSports,
     }
 ]
 
-## questions
+## Questions
 ### /addQuestion
 
 * expects
