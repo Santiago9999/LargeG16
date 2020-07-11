@@ -46,7 +46,7 @@ mongoose.connection.on('error', function (error) {
 });
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 app.get('/', function (request, response) {
-  response.send('Hello World!')
+  response.send('Hello World! 2')
 });
 
 app.listen(PORT, function () {
