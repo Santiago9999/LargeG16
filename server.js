@@ -19,7 +19,7 @@ const {
 } = require('./models/users');
 
 const app = express();
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 app.set('port', (process.env.PORT || 3002));
 console.log(process.env.MONGODB_URI);
 
