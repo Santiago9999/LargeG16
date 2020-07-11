@@ -6,8 +6,6 @@
   "scripts": {
     "test": "mocha",
     "start": "node server.js",
-    "dev": "concurrently \"nodemon server.js\" \"cd frontend && npm run start\"",
-    "heroku-postbuild": "cd frontend && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
