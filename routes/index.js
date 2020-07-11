@@ -60,8 +60,8 @@ router.delete('/Users/:id', function(req, res) {
 });
 
 
-router.route('/login').get(UserInfo.login);
-router.route('/register').post(UserInfo.register);
+router.route('/getLogin').get(UserInfo.login);
+router.route('/postregister').post(UserInfo.register);
 router.route('/UpdateIntro').post(updateUserData.postUpdateIntro);
 router.route('/UpdateCS1').post(updateUserData.postUpdateCS1);
 router.route('/UpdateCS2').post(updateUserData.postUpdateCS2);
@@ -71,8 +71,8 @@ router.route('/getCS2HighScores').get(getHighScores.getCS2HighScores);
 router.route('/getTotalHighScores').get(getHighScores.getTotalHighScores);
 router.route('/addQuestion').post(updateQuestions.postQuestions);
 router.route('/getQuestion').get(updateQuestions.getQuestions);
-router.route('/changePassword').get(UserInfo.changePassword);
-router.route('/validateUser').post(UserInfo.validateUser);
+router.route('/postChangePassword').post(UserInfo.changePassword);
+router.route('/postvalidateUser').post(UserInfo.validateUser);
 
 
 module.exports = router; 
