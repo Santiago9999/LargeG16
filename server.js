@@ -16,7 +16,9 @@ const {
 } = require('./models/users');
 
 const app = express();
-const PORT = 3002;
+//const PORT = 3002;
+app.set('port', (process.env.PORT || 3002));
+
 const MONGODB_URI = "mongodb+srv://Wildsoul:Katara@cluster0-xs7yp.mongodb.net/CS2EZ?retryWrites=true&w=majority";
 
 // app.use(cors())
