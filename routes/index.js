@@ -60,17 +60,17 @@ router.delete('/Users/:id', function(req, res) {
 });
 
 
-router.route('/getLogin').get(UserInfo.login);
+router.route('/getLogin').post(UserInfo.login);
 router.route('/postregister').post(UserInfo.register);
 router.route('/UpdateIntro').post(updateUserData.postUpdateIntro);
 router.route('/UpdateCS1').post(updateUserData.postUpdateCS1);
 router.route('/UpdateCS2').post(updateUserData.postUpdateCS2);
-router.route('/getIntroHighScores').get(getHighScores.getIntroHighScores);
-router.route('/getCS1HighScores').get(getHighScores.getCS1HighScores);
-router.route('/getCS2HighScores').get(getHighScores.getCS2HighScores);
-router.route('/getTotalHighScores').get(getHighScores.getTotalHighScores);
+router.route('/getIntroHighScores').post(getHighScores.getIntroHighScores);
+router.route('/getCS1HighScores').post(getHighScores.getCS1HighScores);
+router.route('/getCS2HighScores').post(getHighScores.getCS2HighScores);
+router.route('/getTotalHighScores').post(getHighScores.getTotalHighScores);
 router.route('/addQuestion').post(updateQuestions.postQuestions);
-router.route('/getQuestion').get(updateQuestions.getQuestions);
+router.route('/getQuestion').post(updateQuestions.getQuestions);
 router.route('/postChangePassword').post(UserInfo.changePassword);
 router.route('/postvalidateUser').post(UserInfo.validateUser);
 
