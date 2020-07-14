@@ -30,16 +30,20 @@ const UsersSchema = new Schema({
 		type: String, required: true
 	},
 	LastName: {
-		type: String , required: true
+		type: String, required: true
 	},
 	Email: {
-		type: String , required: true
+		type: String, required: true
 	},
 	Password: {
-		type: String ,required: true
+		type: String, required: true
 	},
 	Validated: {
-		type: Number ,required: true
+		type: Number, required: true
+	},
+	ValidateCode :
+	{
+		type: Number, required: true
 	},
 	Date: {
 		type : Date, default: Date.now

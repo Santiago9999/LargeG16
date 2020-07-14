@@ -15,7 +15,6 @@ const {
 } = require('body-parser');
 var result = '';
 var error = '';
-var randomCode = 0;
 module.exports = {
     login: async (req, res, next) => {
         console.log('We are currently in the login API');
@@ -106,6 +105,7 @@ module.exports = {
             Email: email,
             Password: password
         });
+        var randomCode = crypto.randomBytes(4).toString('hex');
         if (credentials.length == 0) {
             console.log('No records Found');
             var userInstance = new userModel({
@@ -114,6 +114,7 @@ module.exports = {
                 Email: email,
                 Password: password,
                 Validated: 0,
+                ValidatedCode: randomCode,
                 Scores: [{
                     Intro: [{
                         HighScore: 0,
@@ -153,7 +154,7 @@ module.exports = {
                             pass: 'PQ4RQ6ARAbNJMTtZvZf'
                         }
                     });
-                    randomCode = crypto.randomBytes(4).toString('hex');
+                    //randomCode = crypto.randomBytes(4).toString('hex');
                     var mailOPtions = {
                         from: 'triviacreviceg16@gmail.com',
                         to: email,
@@ -184,6 +185,7 @@ module.exports = {
             var ret = {
                 firstName: firstName,
                 lastName: lastName,
+                ValidatedCode: randomCode,
                 result: result,
                 error: error
             }
@@ -198,7 +200,7 @@ module.exports = {
                 error: error
             }
             console.log('Unsuccessfull Test');
-            res.status(200).json(ret);
+            return res.status(200).json(ret);
         }
     },
     changePassword: async (req, res, next) => {
@@ -259,7 +261,6 @@ module.exports = {
             email,
             code
         } = req.body;
-        if (randomCode = code) {
             await userModel.findOneAndUpdate({
                     "Email": email
                 }, {
@@ -279,13 +280,11 @@ module.exports = {
                     }
                 }
             );
-        }
         var ret = {
             result: result,
             error: error
         }
-        res.status(200).json(ret);
-        return;
+        return res.status(200).json(ret);
     }
     // Do Delete
 }
