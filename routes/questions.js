@@ -56,7 +56,7 @@ module.exports = {
         const {
             category,
         } = req.body;
-        var leaderBoard = await questionModel.find({ Category: category}).limit(20).then(reviews => {
+        var leaderBoard = await questionModel.find({Category: category}).then(reviews => {
             res.status(200).json(reviews);
         });
     }

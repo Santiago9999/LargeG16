@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const nodeMailer = require('nodemailer');
 var crypto = require("crypto");
+require('dotenv').config({ path : '../private/private.env'});     
 //----------------------------------------------------------------------------------------------------------
 // Schemas
 const userModel = require('../models/users');
@@ -138,6 +139,8 @@ module.exports = {
                     }]
                 }]
             });
+            console.log(process.env.GMAIL_USERNAME);
+            console.log(process.env.GMAIL_PASSWORD);
             await userInstance.save(function (err) {
                 if (err) {
                     console.log('Failed to add user');
