@@ -97,7 +97,7 @@ module.exports = {
                 ID: id,
                 firstName: firstName,
                 lastName: lastName,
-                intro: introScore,
+                Intro: introScore,
                 CS1: CS1Score,
                 CS2: CS2Score,
                 Total: totalScore,
