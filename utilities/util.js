@@ -177,8 +177,6 @@ async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, cate
   console.log(req.body);
   const {
     _id,
-    firstName,
-    lastName,
     score
   } = req.body;
   const credentials = await primaryModel.find({
