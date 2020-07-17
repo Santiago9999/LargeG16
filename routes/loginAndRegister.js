@@ -41,6 +41,17 @@ module.exports = {
                 Error: error
             }
         });
+        if (credentials.length == 0)
+        {
+            console.log("Account does not exist")
+            result = "Unsuccessfull";
+            error = "Account does not exist"
+            var ret = {
+                result : result,
+                error: error
+            }
+            return res.status(500).json(ret);
+        }
         // No errors on using the find function
         if (credentials[0].Validated == 1) {
             if (credentials.length > 0) {
