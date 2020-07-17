@@ -86,13 +86,13 @@ module.exports = {
 
                 var totalScore = credentials[0].Scores[0].Total[0];
                 console.log('Total Array:  ' + totalScore);
-
-                result = 'Success';
             } else {
                 console.log('No records found');
                 error = 'No Records found';
             }
             // Creating JSON Package to Send back 
+            result = 'Success';
+            error = ' ';
             var ret = {
                 ID: id,
                 firstName: firstName,
@@ -101,6 +101,7 @@ module.exports = {
                 CS1: CS1Score,
                 CS2: CS2Score,
                 Total: totalScore,
+                result : result,
                 error: error
             }
             // Everything is Good, we are sending back a JSON Package
