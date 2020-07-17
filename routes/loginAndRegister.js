@@ -52,7 +52,7 @@ module.exports = {
             }
             return res.status(200).json(ret);
         }
-        else if (credentials[0].password != password)
+        else if (credentials[0].Password != password)
         {
             console.log("Incorrect Password")
             result = "Unsuccessfull";
