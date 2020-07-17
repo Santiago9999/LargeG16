@@ -43,7 +43,7 @@ const UsersSchema = new Schema({
 	},
 	ValidateCode :
 	{
-		type: Number, required: true
+		type: String, required: true
 	},
 	Date: {
 		type : Date, default: Date.now

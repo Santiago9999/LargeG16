@@ -102,10 +102,9 @@ module.exports = {
             password
         } = req.body;
         console.log('Data Recieved \nEmail: ' + email + ' Password: ' + password + ' FirstName: ' + firstName + ' LastName: ' + lastName);
-        // Check if User already Exist
+        // Check if User already exist
         const credentials = await userModel.find({
             Email: email,
-            Password: password
         });
         if (credentials.length == 0) {
             console.log('No records Found');
@@ -139,8 +138,8 @@ module.exports = {
                     }]
                 }]
             });
-            console.log(process.env.GMAIL_USERNAME);
-            console.log(process.env.GMAIL_PASSWORD);
+            // console.log(process.env.GMAIL_USERNAME);
+            // console.log(process.env.GMAIL_PASSWORD);
             await userInstance.save(function (err) {
                 if (err) {
                     console.log('Failed to add user');
@@ -157,7 +156,6 @@ module.exports = {
                             pass: 'PQ4RQ6ARAbNJMTtZvZf'
                         }
                     });
-                    //randomCode = crypto.randomBytes(4).toString('hex');
                     var mailOPtions = {
                         from: 'triviacreviceg16@gmail.com',
                         to: email,
@@ -181,30 +179,13 @@ module.exports = {
             result = 'Unsuccessfull';
             error = 'User Name Already Exist';
         }
-        if (await userModel.exists({
-                // Fix this 
-                Email: email
-            })) {
-            var ret = {
-                firstName: firstName,
-                lastName: lastName,
-                ValidatedCode: randomCode,
-                result: result,
-                error: error
-            }
-            console.log('Successfull Test');
-            res.status(200).json(ret);
-        } else {
-            result = 'Unsuccessfull';
             var ret = {
                 firstName: firstName,
                 lastName: lastName,
                 result: result,
                 error: error
             }
-            console.log('Unsuccessfull Test');
-            return res.status(200).json(ret);
-        }
+        return res.status(200).json(ret);
     },
     changePassword: async (req, res, next) => {
         console.log('We are currently in the change password API');
