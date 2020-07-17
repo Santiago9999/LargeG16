@@ -4,7 +4,9 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const nodeMailer = require('nodemailer');
 var crypto = require("crypto");
-require('dotenv').config({ path : '../private/private.env'});     
+require('dotenv').config({
+    path: '../private/private.env'
+});
 //----------------------------------------------------------------------------------------------------------
 // Schemas
 const userModel = require('../models/users');
@@ -41,13 +43,23 @@ module.exports = {
                 Error: error
             }
         });
-        if (credentials.length == 0)
-        {
+        if (credentials.length == 0) {
             console.log("Account does not exist")
             result = "Unsuccessfull";
             error = "Account does not exist"
             var ret = {
-                result : result,
+                result: result,
+                error: error
+            }
+            return res.status(200).json(ret);
+        }
+        else if (credentials[0].password != password)
+        {
+            console.log("Incorrect Password")
+            result = "Unsuccessfull";
+            error = "Incorrect Password"
+            var ret = {
+                result: result,
                 error: error
             }
             return res.status(200).json(ret);
@@ -99,7 +111,7 @@ module.exports = {
             result = "Unsuccessfull";
             error = "Account not validated"
             var ret = {
-                result : result,
+                result: result,
                 error: error
             }
             res.status(200).json(ret);
@@ -193,13 +205,13 @@ module.exports = {
             result = 'Unsuccessfull';
             error = 'User Name Already Exist';
         }
-            var ret = {
-                firstName: firstName,
-                lastName: lastName,
+        var ret = {
+            firstName: firstName,
+            lastName: lastName,
 
-                result: result,
-                error: error
-            }
+            result: result,
+            error: error
+        }
         return res.status(200).json(ret);
     },
     changePassword: async (req, res, next) => {
@@ -260,24 +272,21 @@ module.exports = {
             email,
             code
         } = req.body;
-            var check = await userModel.findOneAndUpdate({
-                    "Email": email, "ValidateCode" : code
-                }, {
-                    "$set": {
-                        "Validated": 1,
-                    }
-                }
-            );
-        if (check.Validated)
-        {
+        var check = await userModel.findOneAndUpdate({
+            "Email": email,
+            "ValidateCode": code
+        }, {
+            "$set": {
+                "Validated": 1,
+            }
+        });
+        if (check.Validated) {
             result = 'Successfully Validated';
             console.log(result);
             ret = {
                 result: result,
             }
-        }
-        else
-        {
+        } else {
             result = 'Unsuccessfully Validated';
             console.log(result);
             ret = {
