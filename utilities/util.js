@@ -8,8 +8,8 @@ function getScores(credentials, category,  numberOfCorrect,numberOfIncorrect) {
   var totalCorrect = credentials[0].Scores[0][category][0].TotalCorrect
   var totalAttempted = credentials[0].Scores[0][category][0].TotalAttempted;
   var scoresID = credentials[0].Scores[0][category][0]._id;
-  if (parseInt(score) > highScore) {
-    highScore = parseInt(score);
+  if (parseInt(numberOfCorrect) > highScore) {
+    highScore = parseInt(numberOfCorrect);
   }
   totalCorrect = parseInt(totalCorrect + parseInt(numberOfCorrect));
   totalAttempted += numberOfIncorrect;
@@ -177,6 +177,8 @@ async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, cate
   console.log(req.body);
   const {
     _id,
+    firstName,
+    lastName,
     numberOfCorrect,
     numberOfIncorrect
   } = req.body;
