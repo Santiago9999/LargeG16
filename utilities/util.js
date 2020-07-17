@@ -3,7 +3,7 @@ const userModel = require('../models/users');
 var error = '';
 var result ='';
 
-function getScores(credentials, category,  numberOfCorrect,numberOfAttemped) {
+function getScores(credentials, category,  numberOfCorrect,numberOfAttempted) {
   var highScore = credentials[0].Scores[0][category][0].HighScore;
   var totalCorrect = credentials[0].Scores[0][category][0].TotalCorrect
   var totalAttempted = credentials[0].Scores[0][category][0].TotalAttempted;
@@ -12,7 +12,7 @@ function getScores(credentials, category,  numberOfCorrect,numberOfAttemped) {
     highScore = parseInt(numberOfCorrect);
   }
   totalCorrect = parseInt(totalCorrect + parseInt(numberOfCorrect));
-  totalAttempted += numberOfAttemped;
+  totalAttempted += numberOfAttempted;
 
   var val = [scoresID, highScore, totalCorrect, totalAttempted]
   return val
@@ -180,7 +180,7 @@ async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, cate
     firstName,
     lastName,
     numberOfCorrect,
-    numberOfAttemped
+    numberOfAttempted
   } = req.body;
   const credentials = await primaryModel.find({
     _id: _id
@@ -208,7 +208,7 @@ async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, cate
     return;
   }
   // Getting Previous Values
-  var val = getScores(credentials, category, numberOfCorrect,numberOfAttemped);
+  var val = getScores(credentials, category, numberOfCorrect,numberOfAttempted);
   var phase1 = await updateUser(val[0], category, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating Total Table
