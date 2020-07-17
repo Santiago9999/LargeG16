@@ -50,7 +50,7 @@ module.exports = {
                 result : result,
                 error: error
             }
-            return res.status(500).json(ret);
+            return res.status(200).json(ret);
         }
         // No errors on using the find function
         if (credentials[0].Validated == 1) {
