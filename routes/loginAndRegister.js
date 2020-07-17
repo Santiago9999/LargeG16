@@ -30,8 +30,7 @@ module.exports = {
         console.log('Data Recieved Email: ' + email + ' Password: ' + password)
         // Find the Users other fields
         const credentials = await userModel.find({
-            Email: email,
-            Password: password
+            Email: email
         }, function (err) {
             if (err) {
                 result = "Unsuccessfull";
