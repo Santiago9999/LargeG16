@@ -65,12 +65,11 @@ module.exports = {
                 var totalScore = credentials[0].Scores[0].Total[0];
                 console.log('Total Array:  ' + totalScore);
 
-                error = 'Sucess';
+                result = 'Success';
             } else {
                 console.log('No records found');
                 error = 'No Records found';
             }
-
             // Creating JSON Package to Send back 
             var ret = {
                 ID: id,
@@ -82,13 +81,17 @@ module.exports = {
                 Total: totalScore,
                 error: error
             }
-
             // Everything is Good, we are sending back a JSON Package
             res.status(200).json(ret);
         } else {
             console.log("Account not validated")
             result = "Unsuccessfull";
             error = "Account not validated"
+            var ret = {
+                result : result,
+                error: error
+            }
+            res.status(200).json(ret);
         }
     },
     register: async (req, res, next) => {
@@ -160,7 +163,7 @@ module.exports = {
                         from: 'triviacreviceg16@gmail.com',
                         to: email,
                         subject: 'Email Verification for TrivaCrevice',
-                        text: 'Hello ' + firstName + 'Thank you for registering for TriviaCrevice \n Please Enter the Following Code to Validade you account \n This is your Code : ' + randomCode + ' \nIf you did not register for TriviaCrevice please ignore this email, Please signup now'
+                        text: 'Hello ' + firstName + ' thank you for registering for TriviaCrevice. \nPlease enter the following code to validate your account. \nThis is your code : ' + randomCode + ' \nIf you did not register for TriviaCrevice you can ignore this email.'
                     }
                     transporter.sendMail(mailOPtions, function (err, info) {
                         if (err) {
@@ -182,6 +185,7 @@ module.exports = {
             var ret = {
                 firstName: firstName,
                 lastName: lastName,
+
                 result: result,
                 error: error
             }
@@ -251,12 +255,6 @@ module.exports = {
                     "$set": {
                         "Validated": 1,
                     }
-                },
-                function (err) {
-                    if (err) {
-                        console.log(err);
-                        error = err;
-                    } 
                 }
             );
         if (check.Validated)
@@ -265,7 +263,6 @@ module.exports = {
             console.log(result);
             ret = {
                 result: result,
-                error: error
             }
         }
         else
@@ -274,7 +271,6 @@ module.exports = {
             console.log(result);
             ret = {
                 result: result,
-                error: error
             }
         }
         return res.status(200).json(ret);
