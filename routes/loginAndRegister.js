@@ -93,6 +93,7 @@ module.exports = {
     },
     register: async (req, res, next) => {
         console.log('We are currently in the register API');
+        var randomCode = crypto.randomBytes(4).toString('hex');
         console.log(req.body);
         const {
             firstName,
@@ -106,7 +107,6 @@ module.exports = {
             Email: email,
             Password: password
         });
-        var randomCode = crypto.randomBytes(4).toString('hex');
         if (credentials.length == 0) {
             console.log('No records Found');
             var userInstance = new userModel({
@@ -115,7 +115,7 @@ module.exports = {
                 Email: email,
                 Password: password,
                 Validated: 0,
-                ValidatedCode: randomCode,
+                ValidateCode: randomCode,
                 Scores: [{
                     Intro: [{
                         HighScore: 0,
@@ -223,8 +223,7 @@ module.exports = {
                     Result: result,
                     Error: error
                 }
-                res.status(500).json(ret);
-                return
+                return res.status(500).json(ret);
             }
         });
         if (credentials[0].Password == password) {
@@ -260,12 +259,13 @@ module.exports = {
     },
     validateUser: async (req, res, next) => {
         console.log('We are currently in the Validate API');
+        var ret = null;
         const {
             email,
             code
         } = req.body;
-            await userModel.findOneAndUpdate({
-                    "Email": email
+            var check = await userModel.findOneAndUpdate({
+                    "Email": email, "ValidateCode" : code
                 }, {
                     "$set": {
                         "Validated": 1,
@@ -274,18 +274,27 @@ module.exports = {
                 function (err) {
                     if (err) {
                         console.log(err);
-                        console.log("Unsuccessfully Validaded");
-                        result = "Unsuccessfull";
                         error = err;
-                    } else {
-                        console.log("Successfully Validaded");
-                        result = "Successfull";
-                    }
+                    } 
                 }
             );
-        var ret = {
-            result: result,
-            error: error
+        if (check.Validated)
+        {
+            result = 'Successfully Validated';
+            console.log(result);
+            ret = {
+                result: result,
+                error: error
+            }
+        }
+        else
+        {
+            result = 'Unsuccessfully Validated';
+            console.log(result);
+            ret = {
+                result: result,
+                error: error
+            }
         }
         return res.status(200).json(ret);
     }
