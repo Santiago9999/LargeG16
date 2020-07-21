@@ -45,9 +45,9 @@ mongoose.connection.on('error', function (error) {
   console.log('Mongoose Connection Error : ' + error);
 });
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-app.get('/', function (request, response) {
-  response.send('Hello World! 2')
-});
+// app.get('/', function (request, response) {
+//   response.send('Hello World! 2')
+// });
 
 app.listen(PORT, function () {
   console.log(`Server listening on port ${PORT}.`);
@@ -55,7 +55,7 @@ app.listen(PORT, function () {
 
 app.use(express.static(path.join(__dirname, 'frontend', 'build')));
 
-// app.get('*', (req, res) => 
-// {
-//   res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'))
-// });
+app.get('*', (req, res) => 
+{
+  res.sendFile(path.join(__dirname, 'public', 'build', 'index.html'))
+});
