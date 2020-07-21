@@ -72,6 +72,7 @@ router.route('/getTotalHighScores').post(getHighScores.getTotalHighScores);
 router.route('/addQuestion').post(updateQuestions.postQuestions);
 router.route('/getQuestion').post(updateQuestions.getQuestions);
 router.route('/postChangePassword').post(UserInfo.changePassword);
+router.route('/postForgotPassword').post(UserInfo.forgotPassword);
 router.route('/postvalidateUser').post(UserInfo.validateUser);
 
 

@@ -265,6 +265,42 @@ module.exports = {
         }
         res.status(200).json(ret);
     },
+    forgotPassword: async (req, res, next) => {
+        console.log('We are currently in the forgot password email API');
+        const {
+            email,
+            code
+        } = req.body;
+        var transporter = nodeMailer.createTransport({
+            service: 'gmail',
+            secure: true,
+            auth: {
+                user: 'triviacreviceg16@gmail.com',
+                pass: 'PQ4RQ6ARAbNJMTtZvZf'
+            }
+        });
+        var mailOPtions = {
+            from: 'triviacreviceg16@gmail.com',
+            to: email,
+            subject: 'Forgot Password Confirmation',
+            text: 'Hello ' + firstName + ' please input the following code' + code + ' on the forgot password page.'
+        }
+        transporter.sendMail(mailOPtions, function (err, info) {
+            if (err) {
+                result = "Unsuccesfull";
+                error = "Failed to Send Email";
+                console.log(error);
+            } else {
+                console.log('Email Send: ' + info.response);
+                result = "Succesfull";
+            }
+        });
+        var ret = {
+            result: result,
+            error: error
+        }
+        res.status(200).json(ret);
+    },
     validateUser: async (req, res, next) => {
         console.log('We are currently in the Validate API');
         var ret = null;
