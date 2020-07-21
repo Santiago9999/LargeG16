@@ -131,6 +131,8 @@ async function updateLeaderboard(model, credentials, _id, category, firstName, l
         "UserID": _id
       }, {
         "$set": {
+          "FirstName": firstName,
+          "LastName": lastName,
           "HighScore": totalHighScore,
           "TotalCorrect": totalCorrect,
           "TotalAttempted": totalAttempted
