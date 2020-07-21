@@ -293,7 +293,7 @@ module.exports = {
                 from: 'triviacreviceg16@gmail.com',
                 to: email,
                 subject: 'Forgot Password Confirmation',
-                text: 'Hello ' + credentials[0].FirstName + ' please input the following code' + code + ' on the forgot password page.'
+                text: 'Hello ' + credentials[0].FirstName + ' please input the following code' + code + ' on the forgot password page. \nIf you did not register for TriviaCrevice you can ignore this email.'
             }
             transporter.sendMail(mailOPtions, function (err, info) {
                 if (err) {
