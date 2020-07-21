@@ -1,0 +1,31 @@
+
+#title {
+  text-align: center;
+  font-weight: Bold;
+  font-family: Arial, sans-serif;
+  color: Purple;
+}
+#ddOption
+{
+  font-weight: Bold;
+}
+#drop1
+{
+  text-align: right;
+}
+#drop2
+{
+  text-align: center;
+}
+.spacer
+{
+  margin-bottom: 100px;
+}
+.aboveSpacer
+{
+  margin-top: 50px;
+}
+
+.gray {
+  background-color: grey;
+}
