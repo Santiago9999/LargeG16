@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha",
     "start": "node server.js",
-    "heroku-postbuild": "cd new-app &&  npm start"
+    "heroku-postbuild": "cd new-app && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
