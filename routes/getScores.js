@@ -16,9 +16,10 @@ module.exports = {
         const {
             numberOfSpots
         } = req.body;
+        var limit = parseInt(numberOfSpots);
         var leaderBoard = await leaderboardModelIntro.find().sort({
             'HighScore': -1
-        }).limit(numberOfSpots).then(reviews => {
+        }).limit(limit).then(reviews => {
             res.status(200).json(reviews)
         });
     },
@@ -28,9 +29,10 @@ module.exports = {
         const {
             numberOfSpots
         } = req.body;
+        var limit = parseInt(numberOfSpots);
         var leaderBoard = await leaderboardModelCS1.find().sort({
             'HighScore': -1
-        }).limit(numberOfSpots).then(reviews => {
+        }).limit(limit).then(reviews => {
             res.status(200).json(reviews)
         });
     },
@@ -40,9 +42,10 @@ module.exports = {
         const {
             numberOfSpots
         } = req.body;
+        var limit = parseInt(numberOfSpots);
         var leaderBoard = await leaderboardModelCS2.find().sort({
             'HighScore': -1
-        }).limit(numberOfSpots).then(reviews => {
+        }).limit(limit).then(reviews => {
             res.status(200).json(reviews)
         });
     },
@@ -52,9 +55,10 @@ module.exports = {
         const {
             numberOfSpots
         } = req.body;
+        var limit = parseInt(numberOfSpots);
         var leaderBoard = await leaderboardModelTotal.find().sort({
             'HighScore': -1
-        }).limit(numberOfSpots).then(reviews => {
+        }).limit(limit).then(reviews => {
             res.status(200).json(reviews)
         });
     }
