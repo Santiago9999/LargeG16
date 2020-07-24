@@ -184,8 +184,8 @@ async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, cate
     numberOfCorrect,
     numberOfAttempted
   } = req.body;
-  numberOfCorrect = parseInt(numberOfCorrect);
-  numberOfAttempted = parseInt(numberOfAttempted);
+  var numberOfCorrect2 = parseInt(numberOfCorrect);
+  var numberOfAttempted2 = parseInt(numberOfAttempted);
   const credentials = await primaryModel.find({
     _id: _id
   }, function (err) {
@@ -212,7 +212,7 @@ async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, cate
     return;
   }
   // Getting Previous Values
-  var val = getScores(credentials, category, numberOfCorrect,numberOfAttempted);
+  var val = getScores(credentials, category, numberOfCorrect2,numberOfAttempted2);
   var phase1 = await updateUser(val[0], category, parseInt(val[1]), parseInt(val[2]), parseInt(val[3]));
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Updating Total Table
