@@ -184,6 +184,8 @@ async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, cate
     numberOfCorrect,
     numberOfAttempted
   } = req.body;
+  numberOfCorrect = parseInt(numberOfCorrect);
+  numberOfAttempted = parseInt(numberOfAttempted);
   const credentials = await primaryModel.find({
     _id: _id
   }, function (err) {
