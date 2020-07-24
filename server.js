@@ -49,11 +49,11 @@ mongoose.connection.on('error', function (error) {
 //   response.send('Hello World! 2')
 // });
 
-app.use(express.static(path.join(__dirname, 'new-app', 'build')));
+app.use(express.static(path.join(__dirname, 'new_frontend', 'build')));
 
 app.get('*', (req, res) => 
 {
-  res.sendFile(path.join(__dirname, 'new-app', 'build','index.html'))
+  res.sendFile(path.join(__dirname, 'new_frontend', 'build','index.html'))
 });
 
 app.listen(PORT, function () {
