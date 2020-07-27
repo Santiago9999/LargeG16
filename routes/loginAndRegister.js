@@ -168,8 +168,8 @@ module.exports = {
                     }]
                 }]
             });
-            // console.log(process.env.GMAIL_USERNAME);
-            // console.log(process.env.GMAIL_PASSWORD);
+             console.log(process.env.GMAIL_USERNAME);
+             console.log(process.env.GMAIL_PASSWORD);
             await userInstance.save(function (err) {
                 if (err) {
                     console.log('Failed to add user');
@@ -182,15 +182,15 @@ module.exports = {
                         service: 'gmail',
                         secure: true,
                         auth: {
-                            user: 'triviacreviceg16@gmail.com',
-                            pass: 'PQ4RQ6ARAbNJMTtZvZf'
+                            user: process.env.GMAIL_USERNAME,
+                            pass: process.env.GMAIL_PASSWORD
                         }
                     });
                     var mailOPtions = {
                         from: 'triviacreviceg16@gmail.com',
                         to: email,
                         subject: 'Email Verification for TrivaCrevice',
-                        text: 'Hello ' + firstName + ' thank you for registering for TriviaCrevice. \nPlease enter the following code to validate your account. \nThis is your code : ' + randomCode + ' \nIf you did not register for TriviaCrevice you can ignore this email.'
+                        text: 'Hello ' + firstName + ' thank you for registering for TriviaCrevice. \nPlease enter the following code to validate your account. \nThis is your code :   ' + randomCode + '   \n If you did not register for TriviaCrevice you can ignore this email.'
                     }
                     transporter.sendMail(mailOPtions, function (err, info) {
                         if (err) {
@@ -296,8 +296,8 @@ module.exports = {
                 service: 'gmail',
                 secure: true,
                 auth: {
-                    user: 'triviacreviceg16@gmail.com',
-                    pass: 'PQ4RQ6ARAbNJMTtZvZf'
+                    user: process.env.GMAIL_USERNAME,
+                    pass: process.env.GMAIL_PASSWORD
                 }
             });
             var mailOPtions = {
