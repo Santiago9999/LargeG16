@@ -190,7 +190,7 @@ module.exports = {
                         from: 'triviacreviceg16@gmail.com',
                         to: email,
                         subject: 'Email Verification for TrivaCrevice',
-                        text: 'Hello ' + firstName + ' thank you for registering for TriviaCrevice. \nPlease enter the following code to validate your account. \nThis is your code :   ' + randomCode + '   \n If you did not register for TriviaCrevice you can ignore this email.'
+                        text: 'Hello ' + firstName + ' thank you for registering for TriviaCrevice. \nPlease enter the following code to validate your account. \nThis is your code : ' + randomCode + ' \n If you did not register for TriviaCrevice you can ignore this email.'
                     }
                     transporter.sendMail(mailOPtions, function (err, info) {
                         if (err) {
@@ -300,11 +300,12 @@ module.exports = {
                     pass: process.env.GMAIL_PASSWORD
                 }
             });
+            console.log(credentials[0].FirstName);
             var mailOPtions = {
                 from: 'triviacreviceg16@gmail.com',
                 to: email,
                 subject: 'Forgot Password Confirmation',
-                text: 'Hello ' + credentials[0].FirstName + ' please input the following code' + code + ' on the forgot password page. \nIf you did not register for TriviaCrevice you can ignore this email.'
+                text: 'Hello ' + credentials[0].FirstName + ' please input the following code ' + code + ' on the forgot password page. \nIf you did not request this change you can ignore this email.'
             }
             transporter.sendMail(mailOPtions, function (err, info) {
                 if (err) {
