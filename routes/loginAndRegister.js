@@ -316,6 +316,7 @@ module.exports = {
     validateUser: async (req, res, next) => {
         console.log('We are currently in the Validate API');
         var ret = null;
+        result = "";
         const {
             email,
             code
