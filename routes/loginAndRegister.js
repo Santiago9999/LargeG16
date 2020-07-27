@@ -16,11 +16,12 @@ const {
 const {
     json
 } = require('body-parser');
-var result = '';
-var error = '';
 module.exports = {
     login: async (req, res, next) => {
         console.log('We are currently in the login API');
+        var result = '';
+        var error = '';
+        var ret = null;
         console.log(req.body);
         //response.send(req.body);
         const {
@@ -119,6 +120,9 @@ module.exports = {
     },
     register: async (req, res, next) => {
         console.log('We are currently in the register API');
+        var result = '';
+        var error = '';
+        var ret = null;
         var randomCode = crypto.randomBytes(4).toString('hex');
         console.log(req.body);
         const {
@@ -196,6 +200,7 @@ module.exports = {
                         } else {
                             console.log('Email Send: ' + info.response);
                             result = "Succesfull";
+                            var error = '';
                         }
                     });
                 }
@@ -208,7 +213,6 @@ module.exports = {
         var ret = {
             firstName: firstName,
             lastName: lastName,
-
             result: result,
             error: error
         }
@@ -216,6 +220,9 @@ module.exports = {
     },
     changePassword: async (req, res, next) => {
         console.log('We are currently in the change password API');
+        var result = '';
+        var error = '';
+        var ret = null;
         const {
             email,
             password
@@ -255,6 +262,7 @@ module.exports = {
                     } else {
                         console.log("Successfully Updated Total");
                         result = "Successfull";
+                         error = '';
                     }
                 }
             );
@@ -267,6 +275,9 @@ module.exports = {
     },
     forgotPassword: async (req, res, next) => {
         console.log('We are currently in the forgot password email API');
+        var result = '';
+        var error = '';
+        var ret = null;
         const {
             email,
             code
@@ -303,7 +314,7 @@ module.exports = {
                 } else {
                     console.log('Email Send: ' + info.response);
                     result = "Succesfull";
-                    error = '';
+                    error = ' ';
                 }
             });
         }
@@ -315,6 +326,8 @@ module.exports = {
     },
     validateUser: async (req, res, next) => {
         console.log('We are currently in the Validate API');
+        var result = '';
+        var error = '';
         var ret = null;
         result = "";
         const {

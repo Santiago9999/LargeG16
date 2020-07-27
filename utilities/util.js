@@ -1,7 +1,5 @@
 //const numberOfQuestionsPerSession = 20;
 const userModel = require('../models/users');
-var error = '';
-var result ='';
 
 function getScores(credentials, category,  numberOfCorrect,numberOfAttempted) {
   var highScore = credentials[0].Scores[0][category][0].HighScore;
@@ -65,6 +63,8 @@ function getTotalAttempted(credentials) {
   return introTotalAttempted + CS1TotalAttempted + CS2TotalAttempted
 }
 async function updateUser(scoreID, category, highScore, totalCorrect, totalAttempted) {
+  var error = '';
+  var result ='';
   await userModel.findOneAndUpdate({
       [`Scores.${category}._id`]: scoreID
     }, {
@@ -123,6 +123,8 @@ async function updateTotal(totalScoresID, totalHighScore, totalTotalCorrect, tot
   return error
 }
 async function updateLeaderboard(model, credentials, _id, category, firstName, lastName, totalHighScore, totalCorrect, totalAttempted) {
+  var error = '';
+  var result ='';
   if (await model.exists({
       // Fix this 
       UserID: _id
@@ -176,6 +178,9 @@ async function updateLeaderboard(model, credentials, _id, category, firstName, l
 }
 async function postUpdate(primaryModel, secondaryModel, tertiaryModel, req, category, res){
   console.log('We are currently in the Update' + category + ' API');
+  var result = '';
+  var error = '';
+  var ret = null;
   console.log(req.body);
   const {
     _id,
