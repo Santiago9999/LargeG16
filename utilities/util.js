@@ -1,5 +1,7 @@
 //const numberOfQuestionsPerSession = 20;
 const userModel = require('../models/users');
+var error = '';
+var result ='';
 
 function getScores(credentials, category,  numberOfCorrect,numberOfAttempted) {
   var highScore = credentials[0].Scores[0][category][0].HighScore;
