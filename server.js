@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const util = require('./utilities/util')
+//const util = require('./utilities/util')
 const path = require('path');   
 //const PORT = process.env.PORT || 3001;   
 require('dotenv').config({ path : './private/private.env'});       
