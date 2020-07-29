@@ -7,6 +7,45 @@ body {
     font-size: medium; 
 }
 
+#leaderboard {
+  text-align: center;
+  font-weight: Bold;
+  font-family: Arial, sans-serif;
+  color: Purple;
+  font-size: xx-large;
+}
+#ddOption
+{
+  font-weight: Bold;
+}
+#drop1
+{
+  text-align: right;
+}
+#drop2
+{
+  text-align: center;
+}
+.spacer
+{
+  margin-bottom: 100px;
+}
+.aboveSpacer
+{
+  margin-top: 50px;
+}
+
+#statTitle {
+  font-size: 120%;
+  font-weight: Bold;
+  text-align: left;
+}
+
+h2{
+  font-size: 120%;
+  font-weight: Bold;
+}
+
 .carousel-inner img {
   width: 70%;
   height: 70%;

@@ -1,9 +1,10 @@
-import React, {useState, Component} from 'react';
+import React, {Component} from 'react';
 import '../components/Background.css';
 import 'bootstrap/dist/css/bootstrap.css';
 
 var email;
 var code;
+var emailCookie;
 var noError;
 
 const initialState = {
@@ -11,7 +12,8 @@ const initialState = {
     emailError: "",
     code: "",
     error: "",
-    result: "'"
+    result: "",
+    noError: ""
 };
 
 function setCookie(cname, cvalue) {
@@ -27,14 +29,17 @@ function randomString(length, chars) {
     return result;
 }
 
+
 class ForgotPassword extends Component {
     state = initialState;
 
     handleSubmit = event => {
         event.preventDefault();
+        this.setState({emailError: "", error: "", noError: ""});
         const isValid = this.validate();
         if (isValid) {
         code = (randomString(8, '0123456789abcdefghijklmnopqrstuvwxyz'));
+        emailCookie = email.value;
         var url = 'https://cop4331mern.herokuapp.com/api/postForgotPassword';
         var postForgotPassword =
         {
@@ -48,17 +53,18 @@ class ForgotPassword extends Component {
             .then(json => this.setState({
                 result: json.result, error: json.error
             }, function () {
-                noError = this.errorChecking();
+               noError = this.errorChecking();
                 if (noError) {
                     setCookie("resetCode", code);
-                    setCookie("email", email.value);
+                    setCookie("email", emailCookie);
                     console.log(this.state);
                     this.setState(initialState);
                     window.location.href = '/resetpassword';
-                }
+                } 
             })
             );
-        }
+                this.setState(initialState);
+        } 
     };
 
     errorChecking = () => {
@@ -73,6 +79,7 @@ class ForgotPassword extends Component {
             this.setState({ error });
             return false;
         }
+        this.setState({error: ""})
         return true;
     }
 
@@ -107,19 +114,21 @@ class ForgotPassword extends Component {
       render(){
         return(
             <div id="forgotPasswordDiv">
-                <div class="container">
-                <div class="row">
-                <div class="col-lg-6 col-md-7 mx-auto">
-                <form onSubmit={this.handleSubmit} class="form-signin">
-                <div class="text-center mb-4"></div>
+                <div className="container">
+                <div className="row">
+                <div className="col-lg-6 col-md-7 mx-auto">
+                <form onSubmit={this.handleSubmit} className="form-signin">
+                <div className="text-center mb-4"></div>
     
-                <div class="form-label-group">
-                    <input value={this.state.email} name = "email" type="email" id="email" class="form-control" placeholder="Email" required="" autofocus="" ref={(c) => email = c} onChange={this.handleChange}/>
-                    <label for="email">Email</label>
+                <div className="form-label-group">
+                    <input value={this.state.email} name = "email" type="email" id="email" className="form-control" placeholder="Email" required="" autoFocus="" autoComplete = "on" ref={(c) => email = c} onChange={this.handleChange}/>
+                    <label htmlFor="email">Email</label>
                     <div className ="errorMessage"> {this.state.emailError} </div>
                 </div>
+
+                <div className="errorMessage"> {this.state.error} </div>
     
-                <button class="btn btn-lg btn-secondary btn-block" type="submit">Send Reset Code</button>
+                <button className="btn btn-lg btn-secondary btn-block" type="submit">Send Reset Code</button>
                 </form>
                 </div>
                 </div>

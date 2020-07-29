@@ -10,6 +10,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import './components/Background.css';
 import MyAccountPage from './pages/AppJ';
+import LeaderboardPage from './pages/Leaderboard';
 
 function App()  {
     return (
@@ -21,6 +22,10 @@ function App()  {
 				
 				<Route path="/myaccount" exact>
                     <MyAccountPage />
+                </Route>
+
+                <Route path="/leaderboard" exact>
+                    <LeaderboardPage />
                 </Route>
 
                 <Route path="/register" exact>
