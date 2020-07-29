@@ -224,6 +224,63 @@ export default class App extends Component
   {
     this.setState({numSpots: 25})
   }
+  
+    componentDidUpdate(prevProps, prevState){
+    if (this.state.numSpots !== prevState.numSpots) {
+      // fetch for total leaders
+      var url = 'https://cop4331mern.herokuapp.com/api/getTotalHighScores'
+      var postRequest =
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numberOfSpots: this.state.numSpots })
+      }
+
+      fetch(url, postRequest)
+        .then(res => res.json())
+        .then(json => this.setState({ totalLeaders: json })
+        );
+
+      // fetch for intro leaders
+      var url = 'https://cop4331mern.herokuapp.com/api/getIntroHighScores'
+      var postRequest =
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numberOfSpots: this.state.numSpots })
+      }
+      fetch(url, postRequest)
+        .then(res => res.json())
+        .then(json => this.setState({ introLeaders: json })
+        );
+
+      // fetch for CS1 leaders
+      var url = 'https://cop4331mern.herokuapp.com/api/getCS1HighScores'
+      var postRequest =
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numberOfSpots: this.state.numSpots })
+      }
+      fetch(url, postRequest)
+        .then(res => res.json())
+        .then(json => this.setState({ cs1Leaders: json })
+        );
+
+      // fetch for CS2 leaders
+      var url = 'https://cop4331mern.herokuapp.com/api/getCS2HighScores'
+      var postRequest =
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numberOfSpots: this.state.numSpots })
+      }
+      fetch(url, postRequest)
+        .then(res => res.json())
+        .then(json => this.setState({ cs2Leaders: json })
+        );
+    }
+  }
 
   // CORS error, had to install plugin, might work once we upload to github
   componentDidMount() 
