@@ -424,7 +424,7 @@ export default class App extends Component
         <tr>
           <th>Rank</th>
           <th>Name</th>
-          <th>HighScorecore</th>
+          <th>HighScore</th>
           <th>Percentage</th>
           <th>Right/Total</th>
         </tr>
