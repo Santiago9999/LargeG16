@@ -5,6 +5,7 @@ import {Button, Card, Image, Table} from 'react-bootstrap';
 import tree from "./tree.png"
 //import 'bootstrap/dist/css/bootstrap.min.css' // for the minimal css for table and buttons
 import NavigationBarLogged from '../components/NavigationBarLogged';
+import md5 from '../components/md5';
 
 
 var ID;
@@ -22,6 +23,11 @@ var CS2Array;
 
 var totalString;
 var totalArray;
+
+var email;
+var hashedPassword;
+var noError;
+var error;
 
 
 // checks for matching password
@@ -46,31 +52,6 @@ function getCookie(cname) {
   return "";
 }
 
-function ShowPassword(props)
-{
-	// show nothing if the show change password is false
-	if (props.showPassword === false)
-	{
-		return (null)
-	}
-
-	else
-	{
-		return (
-			<form>
-			  <div class="form-group">
-			    <label for="exampleFormControlInput1">Input a New Password</label>
-			    <input type="password" class="form-control"  placeholder="New Password"/>
-			  </div>
-			  <div class="form-group">
-			    <input type="password" class="form-control"  placeholder="Confirm New Password"/>
-			  </div>
-			  <Button style={{ color:"#ca85e6"}} variant = 'dark' onClick = {<CheckPassword />}>Submit</Button>
-			</form>
-		)
-	}
-}
-
 export default class AppJ extends Component {
   
   constructor(props)
@@ -78,8 +59,98 @@ export default class AppJ extends Component {
   	super(props)
     this.state =
     {
+    	password: "",
+    	confirmPassword: "",
     	showPassword: false
     }	
+  }
+
+  handleChange = event =>
+  {
+  	this.setState({[event.target.name]:event.target.value})
+  };
+  handleSubmit = event =>
+  {
+	  event.preventDefault()
+  	// password can't be empty
+  	if (this.state.password.length === 0 || this.state.confirmPassword.length === 0)
+  	{
+		  error = 'Password cannot be blank';
+		  this.setState({ error });
+  	}
+  	// if the password and confirm password fields match, return a success marker
+  	else if (this.state.password === this.state.confirmPassword)
+  	{
+			console.log("equal")
+			hashedPassword = md5(this.state.password);
+
+	  	var url = 'https://cop4331mern.herokuapp.com/api/postChangePassword'
+	    var postRequest = 
+	    {
+	      method: 'POST',
+	      headers: { 'Content-Type': 'application/json' },
+	      body: JSON.stringify({ email: email, password: hashedPassword})
+	    }
+	    fetch(url, postRequest)
+	      .then(res => res.json())
+		  .then(json => this.setState({errorMessage: json.error}, 
+			function() {
+				noError = this.errorChecking();
+			})
+	    );
+
+  	}
+  	else
+  	{
+		error = 'Password has to match.';
+		this.setState({ error });
+		  console.log("not equal")
+		  
+  	}
+  	// if they don't match, return a failed marker
+  };
+
+
+  errorChecking = () => {
+	let error = "";
+
+	if (this.state.errorMessage === "") {
+		error = 'Successful Password Change!';
+	} else {
+		error = this.state.errorMessage;
+	}
+
+	if (error) {
+		this.setState({ error });
+		return false;
+	}
+	return true;
+}
+
+  showPasswordBody()
+  {
+  	if (this.state.showPassword === false)
+  	{
+  		return(null)
+  	}
+  	else
+  	{
+  		return(
+			<form onSubmit={this.handleSubmit.bind(this)}>
+			  <div class="form-group">
+			    <label>Input a New Password</label>
+			    <input name = "password" type="password" className="form-control" value = {this.state.password} placeholder="New Password" onChange = {this.handleChange}/>
+			  </div>
+			  <div class="form-group">
+			    <input  name = "confirmPassword" type="password" className="form-control" value = {this.state.confirmPassword} placeholder="Confirm New Password" onChange = {this.handleChange}/>
+			  </div>
+
+			  <Button style={{ color:"#ca85e6"}} variant = 'dark' type = "submit">Submit</Button>
+			  <br/><div className="errorMessage"> {this.state.error} </div> 
+			</form>
+  		)
+  	}
+  	
   }
 
   changePassword()
@@ -93,7 +164,7 @@ export default class AppJ extends Component {
 
   render ()
   {
-	
+	email = getCookie('email');
 	ID = getCookie('ID');
 	firstName = getCookie('firstName');
 	lastName = getCookie('lastName');
@@ -106,13 +177,38 @@ export default class AppJ extends Component {
 	totalString = getCookie('Total');
 	totalArray = JSON.parse(totalString);
 
+	var totalPercent;
+    var introPercent;
+    var CS1Percent;
+    var CS2Percent;
+
+    if (totalArray.TotalAttempted === 0)
+        totalPercent = 0;
+    else
+        totalPercent = totalArray.TotalCorrect / totalArray.TotalAttempted * 100
+
+    if (introArray.TotalAttempted === 0)
+        introPercent = 0;
+    else
+        introPercent = introArray.TotalCorrect / introArray.TotalAttempted * 100
+
+    if (CS1Array.TotalAttempted === 0)
+        CS1Percent = 0;
+    else
+        CS1Percent = CS1Array.TotalCorrect / CS1Array.TotalAttempted * 100
+
+    if (CS2Array.TotalAttempted === 0)
+        CS2Percent = 0;
+    else
+        CS2Percent = CS2Array.TotalCorrect / CS2Array.TotalAttempted * 100
+
 
   	return (
     <div class="container h-100" className="App">
 	<NavigationBarLogged />
 
     <div class="row h-100 justify-content-center align-items-center">
-      <Card  style={{ width: '40rem' }}>
+      <Card  className = "shadow" style={{ width: '40rem' }}>
   		<Card.Img variant="top" src={tree} className = "tree"/>
   			<Card.Body >
 	  		<h1>Welcome {firstName} {lastName}</h1>
@@ -129,20 +225,21 @@ export default class AppJ extends Component {
 			          <th>Right/Total</th>
 			        </tr>
 			      </thead>
+
 			      <tbody>
-					<tr>
-				      <td>Total</td>
-				      <td>{totalArray.HighScore}</td>
-				      <td>{totalArray.TotalCorrect / totalArray.TotalAttempted * 100}</td>
-				      <td>{totalArray.TotalCorrect}/{totalArray.TotalAttempted}</td>
-				    </tr>
-			      </tbody>
+                    <tr>
+                      <td>Total</td>
+                      <td>{totalArray.HighScore}</td>
+                      <td>{totalPercent.toFixed(2)}%</td>
+                      <td>{totalArray.TotalCorrect}/{totalArray.TotalAttempted}</td>
+                    </tr>
+                  </tbody>
 
 			      <tbody>
 					<tr>
 				      <td>Intro to C</td>
 				      <td>{introArray.HighScore}</td>
-				      <td>{introArray.TotalCorrect / introArray.TotalAttempted * 100}</td>
+				      <td>{introPercent.toFixed(2)}%</td>
 				      <td>{introArray.TotalCorrect}/{introArray.TotalAttempted}</td>
 				    </tr>
 			      </tbody>
@@ -151,7 +248,7 @@ export default class AppJ extends Component {
 					<tr>
 				      <td>CSI</td>
 				      <td>{CS1Array.HighScore}</td>
-				      <td>{CS1Array.TotalCorrect / CS1Array.TotalAttempted * 100}</td>
+				      <td>{CS1Percent.toFixed(2)}%</td>
 				      <td>{CS1Array.TotalCorrect}/{CS1Array.TotalAttempted}</td>
 				    </tr>
 			      </tbody>
@@ -160,15 +257,14 @@ export default class AppJ extends Component {
 					<tr>
 				      <td>CSII</td>
 				      <td>{CS2Array.HighScore}</td>
-				      <td>{CS2Array.TotalCorrect / CS2Array.TotalAttempted * 100}</td>
+				      <td>{CS2Percent.toFixed(2)}%</td>
 				      <td>{CS2Array.TotalCorrect}/{CS2Array.TotalAttempted}</td>
 				    </tr>
 			      </tbody>
 			    </Table>
 
 			    <Button style={{ color:"#ca85e6"}} variant = 'dark' onClick = {this.changePassword.bind(this)}>Change Password</Button>
-			    <ShowPassword showPassword = {this.state.showPassword}/>
-
+			    <div>{this.showPasswordBody()}</div>
 
   			</Card.Body>
 		</Card>

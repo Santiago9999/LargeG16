@@ -45,6 +45,7 @@ class ResetPassword extends Component {
         event.preventDefault();
         email = getCookie('email');
         resetCode = getCookie('resetCode');
+        this.setState({passwordError: "", confirmPasswordError: "", error: ""});
         const isValid = this.validate();
         if (isValid) {
             hashedPassword = md5(this.state.password);
@@ -65,10 +66,13 @@ class ResetPassword extends Component {
                     if (noError) {
                         console.log(this.state);
                         this.setState(initialState);
+                        document.cookie = "resetCode= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+                        document.cookie = "email= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
                         window.location.href = '/login';
                     }
                 })
                 );
+                this.setState(initialState);
         }
     }
 
@@ -145,19 +149,19 @@ class ResetPassword extends Component {
                                 </div>
 
                                 <div className="form-label-group">
-                                    <input value={this.state.code} name="code" type="text" id="code" className="form-control" placeholder="Reset Code" required="" autoFocus="" ref={(c) => code = c} onChange={this.handleChange} />
+                                    <input value={this.state.code} name="code" type="text" id="code" className="form-control" placeholder="Reset Code" required="" autoFocus="" autoComplete = "on" ref={(c) => code = c} onChange={this.handleChange} />
                                     <label htmlFor="code">Reset Code</label>
                                     <div className="errorMessage"> {this.state.codeError} </div>
                                 </div>
 
                                 <div className="form-label-group">
-                                    <input value={this.state.password} name="password" type="password" id="password" className="form-control" placeholder="Password" required="" ref={(c) => password = c} onChange={this.handleChange} />
+                                    <input value={this.state.password} name="password" type="password" id="password" className="form-control" placeholder="Password" required="" autoFocus="" autoComplete = "on" ref={(c) => password = c} onChange={this.handleChange} />
                                     <label htmlFor="password">Password</label>
                                     <div className="errorMessage"> {this.state.passwordError} </div>
                                 </div>
 
                                 <div className="form-label-group">
-                                    <input value={this.state.confirmPassword} name="confirmPassword" type="password" id="confirmPassword" className="form-control" placeholder="Confirm Password" required="" ref={(c) => confirmPassword = c} onChange={this.handleChange} />
+                                    <input value={this.state.confirmPassword} name="confirmPassword" type="password" id="confirmPassword" className="form-control" placeholder="Confirm Password" required="" autoFocus="" autoComplete = "on" ref={(c) => confirmPassword = c} onChange={this.handleChange} />
                                     <label htmlFor="confirmPassword">Confirm Password</label>
                                     <div className="errorMessage"> {this.state.confirmPasswordError} </div>
                                 </div>

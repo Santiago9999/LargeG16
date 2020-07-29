@@ -38,7 +38,7 @@ function ShowMyAccount() {
   } else {
     return (
       <li className="nav-item">
-        <a class="nav-link" href="/myaccount">My Account</a>
+        <a className="nav-link" href="/myaccount">My Account</a>
       </li>
     );
   }
@@ -50,7 +50,7 @@ class NavigationBar extends Component {
       <>
         <nav className="navbar navbar-expand-sm bg-dark navbar-dark">
           <a className="navbar-brand" href="/">
-            <img src={require('./triviacrevice2.png')} className="image-responsive" alt="logo" />
+            <img src={require('./triviacrevice3.png')} className="image-responsive" alt="logo" />
   Trivia Crevice
   </a>
 

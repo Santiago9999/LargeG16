@@ -12,6 +12,7 @@ var hashedPassword;
 var password;
 var confirmPassword;
 var noError;
+var emailCookie;
 
 const initialState = {
     firstName: "",
@@ -30,15 +31,23 @@ const initialState = {
     error: ""
 };
 
+function setCookie(cname, cvalue) {
+    var minutes = 20;
+	var date = new Date();
+	var expires = "expires=" + date.setTime(date.getTime()+(minutes*60*1000));	
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
 class RegisterForm extends Component {
     state = initialState;
 
     handleSubmit = event => {
         event.preventDefault();
+        this.setState({firstNameError: "", lastNameError: "", emailError: "", passwordError: "", confirmPasswordError: "", error: "", noError: ""});
         const isValid = this.validate();
         if (isValid) {
             hashedPassword = md5(this.state.password);
-
+            emailCookie = email.value;
             var url = 'https://cop4331mern.herokuapp.com/api/postRegister';
             var postRegister =
             {
@@ -59,6 +68,7 @@ class RegisterForm extends Component {
                     console.log(noError);
                     if (noError) {
                         console.log(this.state);
+                        setCookie("email", emailCookie);
                         this.setState(initialState);
                         window.location.href = '/registered';
                     }
@@ -141,47 +151,47 @@ class RegisterForm extends Component {
         return (
             <div id="registerDiv">
                 <NavigationBar />
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6 col-md-7 mx-auto">
-                            <form onSubmit={this.handleSubmit} class="form-signin">
-                                <div class="text-center mb-4">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-lg-6 col-md-7 mx-auto">
+                            <form onSubmit={this.handleSubmit} className="form-signin">
+                                <div className="text-center mb-4">
                                     <br /><h1>Register</h1>
                                 </div>
 
-                                <div class="form-label-group">
-                                    <input value={this.state.firstName} name="firstName" type="text" id="firstName" class="form-control" placeholder="First Name" required="" autofocus="" ref={(c) => firstName = c} onChange={this.handleChange} />
-                                    <label for="firstName">First Name</label>
+                                <div className="form-label-group">
+                                    <input value={this.state.firstName} name="firstName" type="text" id="firstName" className="form-control" placeholder="First Name" required="" autoFocus="" autoComplete = "on" ref={(c) => firstName = c} onChange={this.handleChange} />
+                                    <label htmlFor="firstName">First Name</label>
                                     <div className="errorMessage"> {this.state.firstNameError} </div>
                                 </div>
 
-                                <div class="form-label-group">
-                                    <input value={this.state.lastName} name="lastName" type="text" id="lastName" class="form-control" placeholder="Last Name" required="" autofocus="" ref={(c) => lastName = c} onChange={this.handleChange} />
-                                    <label for="lastName">Last Name</label>
+                                <div className="form-label-group">
+                                    <input value={this.state.lastName} name="lastName" type="text" id="lastName" className="form-control" placeholder="Last Name" required="" autoFocus="" autoComplete = "on" ref={(c) => lastName = c} onChange={this.handleChange} />
+                                    <label htmlFor="lastName">Last Name</label>
                                     <div className="errorMessage"> {this.state.lastNameError} </div>
                                 </div>
 
-                                <div class="form-label-group">
-                                    <input value={this.state.email} name="email" type="email" id="email" class="form-control" placeholder="Email" required="" autofocus="" ref={(c) => email = c} onChange={this.handleChange} />
-                                    <label for="email">Email</label>
+                                <div className="form-label-group">
+                                    <input value={this.state.email} name="email" type="email" id="email" className="form-control" placeholder="Email" required="" autoFocus="" autoComplete = "on" ref={(c) => email = c} onChange={this.handleChange} />
+                                    <label htmlFor="email">Email</label>
                                     <div className="errorMessage"> {this.state.emailError} </div>
                                 </div>
 
-                                <div class="form-label-group">
-                                    <input value={this.state.password} name="password" type="password" id="password" class="form-control" placeholder="Password" required="" ref={(c) => password = c} onChange={this.handleChange} />
-                                    <label for="password">Password</label>
+                                <div className="form-label-group">
+                                    <input value={this.state.password} name="password" type="password" id="password" className="form-control" placeholder="Password" required="" ref={(c) => password = c} onChange={this.handleChange} />
+                                    <label htmlFor="password">Password</label>
                                     <div className="errorMessage"> {this.state.passwordError} </div>
                                 </div>
 
-                                <div class="form-label-group">
-                                    <input value={this.state.confirmPassword} name="confirmPassword" type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password" required="" ref={(c) => confirmPassword = c} onChange={this.handleChange} />
-                                    <label for="confirmPassword"> Confirm Password</label>
+                                <div className="form-label-group">
+                                    <input value={this.state.confirmPassword} name="confirmPassword" type="password" id="confirmPassword" className="form-control" placeholder="Confirm Password" required="" ref={(c) => confirmPassword = c} onChange={this.handleChange} />
+                                    <label htmlFor="confirmPassword"> Confirm Password</label>
                                     <div className="errorMessage"> {this.state.confirmPasswordError} </div>
                                 </div>
 
                                 <div className="errorMessage"> {this.state.error} </div> <br />
 
-                                <button class="btn btn-lg btn-secondary btn-block" type="submit">Register</button>
+                                <button className="btn btn-lg btn-secondary btn-block" type="submit">Register</button>
                             </form>
                         </div>
                     </div>

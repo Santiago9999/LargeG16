@@ -8,6 +8,7 @@ var email;
 var hashedPassword;
 var noError;
 var password;
+var emailCookie;
 
 const initialState = {
     ID: "",
@@ -40,9 +41,11 @@ function setCookie(cname, cvalue) {
 
 class LoginForm extends Component {
     state = initialState;
-
+   
     handleSubmit = event => {
         event.preventDefault();
+        this.setState({emailError: "", passwordError: "", noError: "", error: ""});
+        emailCookie = email.value;
         const isValid = this.validate();
         if (isValid) {
             hashedPassword = md5(this.state.password);
@@ -65,6 +68,7 @@ class LoginForm extends Component {
                         noError = this.errorChecking();
                         console.log(noError);
                         if (noError) {
+                            setCookie("email", emailCookie);
                             setCookie("ID", this.state.dummyID);
                             setCookie("firstName", this.state.dummyFirstName);
                             setCookie("lastName", this.state.dummyLastName);
@@ -82,7 +86,7 @@ class LoginForm extends Component {
                         }
                     })
                 );
-            this.setState(initialState);
+                this.setState(initialState);
         }
     }
 
@@ -145,13 +149,13 @@ class LoginForm extends Component {
                                 </div>
 
                                 <div className="form-label-group">
-                                    <input value={this.state.email} name="email" type="email" id="email" className="form-control" placeholder="Email" required="" autoFocus="" ref={(c) => email = c} onChange={this.handleChange} />
+                                    <input value={this.state.email} name="email" type="email" id="email" className="form-control" placeholder="Email" required="" autoFocus="" autoComplete = "on" ref={(c) => email = c} onChange={this.handleChange} />
                                     <label htmlFor="email">Email</label>
                                     <div className="errorMessage"> {this.state.emailError} </div>
                                 </div>
 
                                 <div className="form-label-group">
-                                    <input value={this.state.password} name="password" type="password" id="password" className="form-control" placeholder="Password" required="" ref={(c) => password = c} onChange={this.handleChange} />
+                                    <input value={this.state.password} name="password" type="password" id="password" className="form-control" placeholder="Password" required="" autoFocus = "" autoComplete = "on" ref={(c) => password = c} onChange={this.handleChange} />
                                     <label htmlFor="password">Password</label>
                                     <div className="errorMessage"> {this.state.passwordError} </div>
                                 </div>
