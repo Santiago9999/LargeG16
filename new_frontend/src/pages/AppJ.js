@@ -220,7 +220,7 @@ export default class AppJ extends Component {
 			      <thead>
 			        <tr>
 			          <th>Category</th>
-			          <th>Score</th>
+			          <th>Highscore</th>
 			          <th>Percentage</th>
 			          <th>Right/Total</th>
 			        </tr>
