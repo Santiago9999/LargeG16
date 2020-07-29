@@ -103,7 +103,7 @@ function RenderPersonalStats(props)
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Score</th>
+                <th>Highscore</th>
                 <th>Percentage</th>
                 <th>Right/Total</th>
               </tr>
@@ -424,7 +424,7 @@ export default class App extends Component
         <tr>
           <th>Rank</th>
           <th>Name</th>
-          <th>Score</th>
+          <th>HighScorecore</th>
           <th>Percentage</th>
           <th>Right/Total</th>
         </tr>
