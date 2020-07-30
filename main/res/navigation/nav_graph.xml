@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/LoginRegister">
+
+    <!--LOGIN/REGISTER PAGE-->
+    <fragment
+        android:id="@+id/LoginRegister"
+        android:name="com.example.triviacrevice.pages.loginRegister"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_login_register">
+
+        <action
+            android:id="@+id/action_LoginRegister_to_Login"
+            app:destination="@id/Login" />
+        <action
+            android:id="@+id/action_LoginRegister_to_Register"
+            app:destination="@id/Register" />
+    </fragment>
+
+    <!--LOGIN PAGE-->
+    <fragment
+        android:id="@+id/Login"
+        android:name="com.example.triviacrevice.pages.login"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_Login_to_Home"
+            app:destination="@id/Home" />
+        <action
+            android:id="@+id/action_Login_to_LoginRegister"
+            app:destination="@id/LoginRegister" />
+    </fragment>
+
+    <!--REGISTER PAGE-->
+    <fragment
+        android:id="@+id/Register"
+        android:name="com.example.triviacrevice.pages.register"
+        android:label="First Fragment"
+        tools:layout="@layout/fragment_register">
+
+        <action
+            android:id="@+id/action_Register_to_LoginRegister"
+            app:destination="@id/LoginRegister" />
+        <action
+            android:id="@+id/action_Register_to_Validate"
+            app:destination="@id/Validate" />
+    </fragment>
+
+    <!--VALIDATION PAGE-->
+    <fragment
+        android:id="@+id/Validate"
+        android:name="com.example.triviacrevice.pages.validation"
+        android:label="First Fragment"
+        tools:layout="@layout/fragment_validation">
+
+        <action
+            android:id="@+id/action_Validate_to_LoginRegister"
+            app:destination="@id/LoginRegister" />
+    </fragment>
+
+    <!--HOME PAGE-->
+    <fragment
+        android:id="@+id/Home"
+        android:name="com.example.triviacrevice.pages.home"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_Home_to_LoginRegister"
+            app:destination="@id/LoginRegister" />
+        <action
+            android:id="@+id/action_Home_to_Question"
+            app:destination="@id/Question" />
+        <action
+            android:id="@+id/action_Home_to_Category"
+            app:destination="@id/Category" />
+    </fragment>
+
+    <!--CATEGORY SELECTION-->
+    <fragment
+        android:id="@+id/Category"
+        android:name="com.example.triviacrevice.pages.category"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_category">
+
+        <action
+            android:id="@+id/action_Category_to_Question"
+            app:destination="@id/Question" />
+    </fragment>
+
+    <!--QUESTION PAGE-->
+    <fragment
+        android:id="@+id/Question"
+        android:name="com.example.triviacrevice.pages.questionPage"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_question">
+
+        <action
+            android:id="@+id/action_Question_to_Extra"
+            app:destination="@id/Extra" />
+    </fragment>
+
+    <!--RESULT PAGE-->
+    <fragment
+        android:id="@+id/Extra"
+        android:name="com.example.triviacrevice.pages.ExtraFact"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_extra_fact">
+
+        <action
+            android:id="@+id/action_Extra_to_Question"
+            app:destination="@id/Question" />
+        <action
+            android:id="@+id/action_Extra_to_Result"
+            app:destination="@id/Result" />
+    </fragment>
+
+    <!--FINAL RESULT PAGE-->
+    <fragment
+        android:id="@+id/Result"
+        android:name="com.example.triviacrevice.pages.Result"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_result">
+
+        <action
+            android:id="@+id/action_Result_to_Home"
+            app:destination="@id/Home" />
+        <action
+            android:id="@+id/action_Result_to_LoginRegister"
+            app:destination="@id/LoginRegister" />
+        <action
+            android:id="@+id/action_Result_to_Category"
+            app:destination="@id/Category" />
+    </fragment>
+</navigation>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".pages.validation">
+
+    <TextView
+        android:id="@+id/codeText"
+        android:layout_width="284dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="200dp"
+        android:background="@color/labelBackground"
+        android:gravity="center_horizontal"
+        android:text="Enter the validation code that was emailed to you:"
+        android:textColor="@color/labelText"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="142dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="56dp"
+
+        android:background="@color/newButton"
+        android:text="Confirm"
+        android:textColor="@color/labelText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/codeEnter" />
+
+    <Button
+        android:id="@+id/home"
+        android:layout_width="142dp"
+        android:layout_height="53dp"
+
+        android:layout_marginTop="28dp"
+        android:background="@color/newButton"
+        android:text="Home"
+        android:textColor="@color/labelText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/submit"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/codeEnter"
+        android:layout_width="142dp"
+        android:layout_height="41dp"
+
+        android:layout_marginTop="72dp"
+        android:background="@color/colorAccent"
+
+        android:gravity="center_horizontal|center_vertical"
+        android:hint="Code"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/codeText" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

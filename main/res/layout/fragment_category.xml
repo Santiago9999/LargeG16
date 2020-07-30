@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".pages.category">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="206dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="216dp"
+        android:background="@color/labelBackground"
+        android:text="Choose a category."
+        android:textColor="@color/labelText"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/intro"
+        android:layout_width="157dp"
+        android:layout_height="53dp"
+
+        android:layout_marginTop="48dp"
+        android:background="@color/newButton"
+        android:text="Intro to C"
+        android:textColor="@color/labelText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/cs1"
+        android:layout_width="157dp"
+        android:layout_height="53dp"
+
+        android:layout_marginTop="36dp"
+        android:background="@color/newButton"
+        android:text="CS1"
+        android:textColor="@color/labelText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/intro" />
+
+    <Button
+        android:id="@+id/cs2"
+        android:layout_width="157dp"
+        android:layout_height="53dp"
+
+        android:layout_marginTop="36dp"
+        android:background="@color/newButton"
+        android:text="CS2"
+        android:textColor="@color/labelText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cs1"
+        app:layout_constraintVertical_bias="0.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
